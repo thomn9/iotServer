@@ -1,0 +1,3 @@
+  name: tofu-iot-server
+  on: push
+  jobs:
