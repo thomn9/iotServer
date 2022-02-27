@@ -13,7 +13,6 @@ import static org.hamcrest.Matchers.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 class AgreggatorControllerTest {
