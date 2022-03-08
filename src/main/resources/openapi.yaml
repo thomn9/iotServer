@@ -52,7 +52,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/MeteorologicalData'
+                  $ref: '#/components/schemas/MeteorologicalDataWithTimeStampAndId'
 components:
   schemas:
     Address:
@@ -79,15 +79,38 @@ components:
           $ref: '#/components/schemas/Address'
         owner:
           $ref: '#/components/schemas/Owner'
-    MeteorologicalData:
+    MeteorologicalDataBase:
       type: object
       properties:
         temperature:
           type: number
           format: float
+          description: stupňů Celsia (°C)
         humidity:
           type: number
           format: float
+          minimum: 0.01
+          maximum: 99.99
+          description: procent
+        pressure:
+          type: number
+          format: float
+        light:
+          type: number
+          format: float
+    MeteorologicalDataWithTimeStampAndId:
+      allOf:
+        - $ref: '#/components/schemas/MeteorologicalDataBase'
+      type: object
+      required:
+        - id
+        - timestamp
+      properties:
+        id:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
     Owner:
       required:
         - firstName
@@ -104,5 +127,4 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/MeteorologicalData'
-            required: true
+            $ref: '#/components/schemas/MeteorologicalDataBase'

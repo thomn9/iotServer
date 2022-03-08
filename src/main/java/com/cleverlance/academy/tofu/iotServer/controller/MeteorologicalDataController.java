@@ -5,7 +5,8 @@ import com.cleverlance.academy.tofu.iotServer.service.MeteorologicalDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.api.MeteorologicalDataApi;
-import org.openapitools.model.MeteorologicalData;
+import org.openapitools.model.MeteorologicalDataBase;
+import org.openapitools.model.MeteorologicalDataWithTimeStampAndId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,16 +27,13 @@ public class MeteorologicalDataController implements MeteorologicalDataApi {
     }
 
     @Override
-    public ResponseEntity<List<MeteorologicalData>> getMeteorologicalData() {
-        List<MeteorologicalData> mappedMeteorologicalDataList =
-                this.meteorologicalDataService.getMeteorologicalData().stream()
-                        .map(meteorologicalData -> MAPPER.toOpenApiMeteorologicalData(meteorologicalData))
-                        .collect(Collectors.toList());
+    public ResponseEntity<List<MeteorologicalDataWithTimeStampAndId>> getMeteorologicalData() {
+        List<MeteorologicalDataWithTimeStampAndId> mappedMeteorologicalDataList = MAPPER.toOpenApiListOdMeteorologicalData(this.meteorologicalDataService.getMeteorologicalData());
         return ResponseEntity.ok(mappedMeteorologicalDataList);
     }
 
     @Override
-    public ResponseEntity<Void> saveMeteorologicalData(@RequestBody MeteorologicalData meteorologicalData) {
+    public ResponseEntity<Void> saveMeteorologicalData(@RequestBody MeteorologicalDataBase meteorologicalData) {
         this.meteorologicalDataService.saveMeteorologicalData(MAPPER.fromOpenApiMeteorologicalData(meteorologicalData));
         return ResponseEntity.ok().build();
     }

@@ -31,21 +31,25 @@ class MeteorologicalDataControllerTest {
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
         //testing first post
-        MeteorologicalData testMeteorologicalDataOne = new MeteorologicalData(29.08f,81.9f);
-        String testMeteorologicalDataOneJson = ow.writeValueAsString(testMeteorologicalDataOne);
+        MeteorologicalData meteorologicalData1 = new MeteorologicalData();
+        meteorologicalData1.setTemperature(29.08f);
+        meteorologicalData1.setHumidity(81.9f);
+        String meteorologicalData1Json = ow.writeValueAsString(meteorologicalData1);
 
         mvc.perform(post("/meteorological-data")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(testMeteorologicalDataOneJson))
+                        .content(meteorologicalData1Json))
                 .andExpect(status().isOk());
 
         //testing second post
-        MeteorologicalData testMeteorologicalDataTwo = new MeteorologicalData(25.1f,78.22f);
-        String testMeteorologicalDataTwoJson = ow.writeValueAsString(testMeteorologicalDataTwo);
+        MeteorologicalData meteorologicalData2 = new MeteorologicalData();
+        meteorologicalData2.setTemperature(25.1f);
+        meteorologicalData2.setHumidity(78.22f);
+        String meteorologicalData2Json = ow.writeValueAsString(meteorologicalData2);
 
         mvc.perform(post("/meteorological-data")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(testMeteorologicalDataTwoJson))
+                        .content(meteorologicalData2Json))
                 .andExpect(status().isOk());
 
         //testing get and expecting data from previous posts

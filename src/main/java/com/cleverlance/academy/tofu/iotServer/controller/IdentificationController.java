@@ -2,6 +2,7 @@ package com.cleverlance.academy.tofu.iotServer.controller;
 
 import com.cleverlance.academy.tofu.iotServer.controller.mapper.IdentificationMapper;
 import com.cleverlance.academy.tofu.iotServer.service.IdentificationService;
+import com.cleverlance.academy.tofu.iotServer.service.IdentificationServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.openapitools.api.IdentificationApi;
@@ -16,7 +17,7 @@ public class IdentificationController implements IdentificationApi {
     private static final IdentificationMapper MAPPER = Mappers.getMapper(IdentificationMapper.class);
 
     private final IdentificationService identificationService;
-    public IdentificationController(IdentificationService identificationService) {
+    public IdentificationController(IdentificationServiceImpl identificationService) {
         this.identificationService = identificationService;
     }
 
