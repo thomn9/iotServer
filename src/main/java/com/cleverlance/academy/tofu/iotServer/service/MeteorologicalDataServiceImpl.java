@@ -1,7 +1,7 @@
 package com.cleverlance.academy.tofu.iotServer.service;
 
 import com.cleverlance.academy.tofu.iotServer.model.MeteorologicalData;
-import com.cleverlance.academy.tofu.iotServer.repository.JpaMeteorologicalDataRepository;
+import com.cleverlance.academy.tofu.iotServer.repository.MeteorologicalDataRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -10,9 +10,8 @@ import java.util.List;
 @Service
 public class MeteorologicalDataServiceImpl implements MeteorologicalDataService{
 
-    private final JpaMeteorologicalDataRepository meteorologicalDataRepository;
-
-    public MeteorologicalDataServiceImpl(JpaMeteorologicalDataRepository meteorologicalDataRepository) {
+    private final MeteorologicalDataRepository meteorologicalDataRepository;
+    public MeteorologicalDataServiceImpl(MeteorologicalDataRepository meteorologicalDataRepository) {
         this.meteorologicalDataRepository = meteorologicalDataRepository;
     }
 
