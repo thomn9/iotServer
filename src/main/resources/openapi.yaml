@@ -89,8 +89,8 @@ components:
         humidity:
           type: number
           format: float
-          minimum: 0.01
-          maximum: 99.99
+          minimum: 0
+          maximum: 100
           description: procent
         pressure:
           type: number

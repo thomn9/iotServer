@@ -11,8 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -33,7 +33,7 @@ public class MeteorologicalDataController implements MeteorologicalDataApi {
     }
 
     @Override
-    public ResponseEntity<Void> saveMeteorologicalData(@RequestBody MeteorologicalDataBase meteorologicalData) {
+    public ResponseEntity<Void> saveMeteorologicalData(@Valid @RequestBody MeteorologicalDataBase meteorologicalData) {
         this.meteorologicalDataService.saveMeteorologicalData(MAPPER.fromOpenApiMeteorologicalData(meteorologicalData));
         return ResponseEntity.ok().build();
     }
