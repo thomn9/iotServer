@@ -8,5 +8,5 @@ public interface MeteorologicalDataService {
 
     void saveMeteorologicalData(MeteorologicalData meteorologicalData);
 
-    List<MeteorologicalData> getMeteorologicalData();
+    List<MeteorologicalData> getMeteorologicalData(Integer pageSize, Integer pageNumber);
 }

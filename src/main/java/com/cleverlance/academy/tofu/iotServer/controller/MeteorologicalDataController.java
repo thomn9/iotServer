@@ -27,8 +27,8 @@ public class MeteorologicalDataController implements MeteorologicalDataApi {
     }
 
     @Override
-    public ResponseEntity<List<MeteorologicalDataWithTimeStampAndId>> getMeteorologicalData() {
-        List<MeteorologicalDataWithTimeStampAndId> mappedMeteorologicalDataList = MAPPER.toOpenApiListOdMeteorologicalData(this.meteorologicalDataService.getMeteorologicalData());
+    public ResponseEntity<List<MeteorologicalDataWithTimeStampAndId>> getMeteorologicalData(Integer pageSize, Integer pageNumber) {
+        List<MeteorologicalDataWithTimeStampAndId> mappedMeteorologicalDataList = MAPPER.toOpenApiListOdMeteorologicalData(this.meteorologicalDataService.getMeteorologicalData(pageSize,pageNumber));
         return ResponseEntity.ok(mappedMeteorologicalDataList);
     }
 

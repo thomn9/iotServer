@@ -44,6 +44,20 @@ paths:
     get:
       summary: Get all saved meteorogical data
       operationId: getMeteorologicalData
+      parameters:
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            maximum: 10
+            default: 10
+          required: true
+        - name: pageNumer
+          in: query
+          schema:
+            type: integer
+            default: 0
+          required: true
       responses:
         200:
           description: OK response
