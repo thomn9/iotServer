@@ -76,6 +76,22 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>1.6.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -113,6 +129,27 @@
 							</configOptions>
 						</configuration>
 					</execution>
+					<execution>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<id>generate-client</id>
+
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/clv-iot-aggregator-openApiSpec.json</inputSpec>
+							<library>resttemplate</library>
+							<modelPackage>com.cleverlance.academy.aggregator.client.model</modelPackage>
+							<apiPackage>com.cleverlance.academy.aggregator.client.api</apiPackage>
+							<output>${project.build.directory}/generated-sources</output>
+							<configOptions>
+								<dateLibrary>java8</dateLibrary>
+							</configOptions>
+							<generatorName>java</generatorName>
+							<generateApiTests>false</generateApiTests>
+							<generateModelTests>false</generateModelTests>
+						</configuration>
+					</execution>
+
 				</executions>
 			</plugin>
 			<plugin>
