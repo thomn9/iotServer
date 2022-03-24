@@ -8,7 +8,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>Ruční zadání meteorologických dat</h1>
+    <h2>Ruční zadání meteorologických dat</h2>
     <form method="post" th:action="@{/submit-form}" th:object="${meteorologicaldata}">
         <div class="form-group">
             <label for="temperature">Teplota ve °C</label>
@@ -33,7 +33,7 @@
 </div>
 
 <div class="container">
-    <h1>Meteorologická data</h1>
+    <h2>Meteorologická data</h2>
     <table class="table-striped table table-hover table-dark">
         <thead>
         <tr>
@@ -53,8 +53,28 @@
             <td th:text="${meteorologicaldata.light}"></td>
         </tr>
         </tbody>
+        <tfoot>
+        <tr>
+            <td>
+                Zobrazeno
+                <span th:text="${meteorologicaldatarecords.size()}"></span>
+                záznamů.
+            </td>
+        </tr>
+
+        </tfoot>
     </table>
-    <a th:href="@{/home}" class="btn btn-secondary">Aktualizovat data</a>
+
+    <a th:href="@{/(pageNumber=${#conversions.convert(param.pageNumber, 'java.lang.Integer')} - 1)}"
+       th:class="${#conversions.convert(param.pageNumber, 'java.lang.Integer') > 0} ? 'btn btn-light' : 'btn btn-light disabled'"><<<
+        Předchozí</a>
+
+    <a th:href="@{/(pageNumber=${#conversions.convert(param.pageNumber, 'java.lang.Integer')} + 1)}"
+       th:class="${meteorologicaldatarecords.size() < #conversions.convert(param.pageSize, 'java.lang.Integer')} ? 'btn btn-light disabled' : 'btn btn-light'">
+       Další >>></a>
+    <a th:href="@{/(pageNumber=${param.pageNumber})}" class="btn btn-secondary">Aktualizovat záznamy</a>
+
+
 </div>
 
 </body>
