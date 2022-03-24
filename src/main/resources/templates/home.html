@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <title>F.U.T.O.M.A.K.I Tofu IOT server</title>
+</head>
+<body>
+<div class="container">
+    <h2>Ruční zadání meteorologických dat</h2>
+    <form method="post" th:action="@{/submit-form}" th:object="${meteorologicaldata}">
+        <div class="form-group">
+            <label for="temperature">Teplota ve °C</label>
+            <input id="temperature" class="form-control" th:field="*{temperature}">
+        </div>
+        <div class="form-group">
+            <label for="humidity">Vzdušná vlhkost</label>
+            <input id="humidity" class="form-control" th:field="*{humidity}">
+        </div>
+        <div class="form-group">
+            <label for="pressure">Atmosférický tlak</label>
+            <input id="pressure" class="form-control" th:field="*{pressure}">
+        </div>
+        <div class="form-group">
+            <label for="light">UV index</label>
+            <input id="light" class="form-control" th:field="*{light}">
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Zadat</button>
+        </div>
+    </form>
+</div>
+
+<div class="container">
+    <h2>Meteorologická data</h2>
+    <table class="table-striped table table-hover table-dark">
+        <thead>
+        <tr>
+            <th>Datum a čas</th>
+            <th>Teplota ve °C</th>
+            <th>Vzdušná vlhkost</th>
+            <th>Atmosférický tlak</th>
+            <th>UV index</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="meteorologicaldata : ${meteorologicaldatarecords}">
+            <td th:text="${meteorologicaldata.timeStamp}"></td>
+            <td th:text="${meteorologicaldata.temperature}"></td>
+            <td th:text="${meteorologicaldata.humidity}"></td>
+            <td th:text="${meteorologicaldata.pressure}"></td>
+            <td th:text="${meteorologicaldata.light}"></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td>
+                Zobrazeno
+                <span th:text="${meteorologicaldatarecords.size()}"></span>
+                záznamů.
+            </td>
+        </tr>
+
+        </tfoot>
+    </table>
+
+    <a th:href="@{/(pageNumber=${#conversions.convert(param.pageNumber, 'java.lang.Integer')} - 1)}"
+       th:class="${#conversions.convert(param.pageNumber, 'java.lang.Integer') > 0} ? 'btn btn-light' : 'btn btn-light disabled'"><<<
+        Předchozí</a>
+
+    <a th:href="@{/(pageNumber=${#conversions.convert(param.pageNumber, 'java.lang.Integer')} + 1)}"
+       th:class="${meteorologicaldatarecords.size() < #conversions.convert(param.pageSize, 'java.lang.Integer')} ? 'btn btn-light disabled' : 'btn btn-light'">
+       Další >>></a>
+    <a th:href="@{/(pageNumber=${param.pageNumber})}" class="btn btn-secondary">Aktualizovat záznamy</a>
+
+
+</div>
+
+</body>
+</html>
