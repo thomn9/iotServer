@@ -8,6 +8,8 @@ import com.cleverlance.academy.tofu.iotServer.service.mapper.IdentificationMappe
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -31,8 +33,11 @@ public class RegistrationServiceImpl implements RegistrationService {
 
         Identification identification = this.identificationMapperForClient.toIdentificationForClient(this.identificationRepository.getIdentification());
         String registrationUrl = "https://clv-iot-aggregator.herokuapp.com/identification";
-        ResponseEntity response = this.restTemplate.postForEntity(registrationUrl,identification,Void.class);
-        log.info("*** Registration of IOT server was finished with status code {} ***", response.getStatusCodeValue());
-
+        try {
+            ResponseEntity response = this.restTemplate.postForEntity(registrationUrl, identification, Void.class);
+            log.info("*** Registration of IOT server was finished with status code {} ***", response.getStatusCodeValue());
+        } catch (RestClientResponseException restClientResponseException) {
+            log.info("*** Registration of IOT server failed: {} ***", restClientResponseException.getStatusText());
+        }
     }
 }
