@@ -138,8 +138,8 @@
 						<configuration>
 							<inputSpec>${project.basedir}/src/main/resources/clv-iot-aggregator-openApiSpec.json</inputSpec>
 							<library>resttemplate</library>
-							<modelPackage>com.cleverlance.academy.aggregator.client.model</modelPackage>
-							<apiPackage>com.cleverlance.academy.aggregator.client.api</apiPackage>
+							<modelPackage>com.cleverlance.academy.tofu.iotServer.client.model</modelPackage>
+							<apiPackage>com.cleverlance.academy.tofu.iotServer.client.api</apiPackage>
 							<output>${project.build.directory}/generated-sources</output>
 							<configOptions>
 								<dateLibrary>java8</dateLibrary>
