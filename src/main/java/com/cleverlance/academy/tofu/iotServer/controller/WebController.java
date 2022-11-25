@@ -1,21 +1,12 @@
 package com.cleverlance.academy.tofu.iotServer.controller;
 
-import com.cleverlance.academy.tofu.iotServer.model.MeteorologicalData;
-import com.cleverlance.academy.tofu.iotServer.service.MeteorologicalDataService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.validation.Valid;
 
 @Slf4j
 @Controller
 public class WebController {
-
+/*
     private final MeteorologicalDataService meteorologicalDataService;
 
     public WebController(MeteorologicalDataService meteorologicalDataService) {
@@ -61,5 +52,5 @@ public class WebController {
         this.meteorologicalDataService.saveMeteorologicalData(meteorologicalData);
         return model;
     }
-
+*/
 }

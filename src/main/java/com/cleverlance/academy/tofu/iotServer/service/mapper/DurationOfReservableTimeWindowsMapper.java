@@ -1,0 +1,14 @@
+package com.cleverlance.academy.tofu.iotServer.service.mapper;
+
+import com.cleverlance.academy.tofu.iotServer.model.dto.DurationOfReservableTimeWindowsBaseDto;
+import com.cleverlance.academy.tofu.iotServer.model.dto.DurationOfReservableTimeWindowsDto;
+import com.cleverlance.academy.tofu.iotServer.model.entity.DurationOfReservableTimeWindows;
+import org.mapstruct.Mapper;
+
+@Mapper
+public interface DurationOfReservableTimeWindowsMapper {
+
+    DurationOfReservableTimeWindows toDurationOfReservableTimeWindowsFromDurationOfReservableTimeWindowsBaseDto(DurationOfReservableTimeWindowsBaseDto durationOfReservableTimeWindowsBaseDto);
+
+    DurationOfReservableTimeWindowsDto fromDurationOfReservableTimeWindowsToDurationOfReservableTimeWindowsDto(DurationOfReservableTimeWindows durationOfReservableTimeWindows);
+}
