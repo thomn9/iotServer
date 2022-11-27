@@ -10,5 +10,5 @@ import java.util.List;
 @SuperBuilder
 public class ReservationDataForADateDto {
     private LocalDate date;
-    private List<ReservableTimeWindowWithOccupancyInfoDto> reservableTimeWindowWithOccupancyInfoDtoList;
+    private List<ReservableTimeWindowDto> reservableTimeWindowDtos;
 }

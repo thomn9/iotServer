@@ -5,6 +5,7 @@ import com.cleverlance.academy.tofu.iotServer.model.entity.Reservation;
 import com.cleverlance.academy.tofu.iotServer.repository.JpaDurationOfReservableTimeWindowsRepository;
 import com.cleverlance.academy.tofu.iotServer.repository.JpaReservationRepository;
 import com.cleverlance.academy.tofu.iotServer.service.mapper.ReservationMapper;
+import org.apache.commons.lang3.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,50 +35,58 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<ReservationDataForADateDto> getReservableTimeWindowsSchedule(Long durationOfReservableTimeWindowId) {
         LocalDate today = LocalDate.now();
-        List<LocalDate> reservationDatesList = today.datesUntil(today.plusDays(30)).collect(Collectors.toList());
+        List<LocalDate> reservableDatesSchedule = today.datesUntil(today.plusDays(30)).collect(Collectors.toList());
+        //todo limit db query only to schedule period
+        List<Reservation> reservationDataDtos = reservationRepository.findAll();
         List<BusinessHoursDto> businessHoursDtos = administrationService.getBusinessHours();
+
         Duration duration = durationOfReservableTimeWindowsRepository
                 .getById(durationOfReservableTimeWindowId)
                 .getDuration();
 
-        //todo return from DB, this input must be evaluted during creation of windows (i.e. curently in method getReservableTimeWindowsForDayOfWeek()) not afterwards
-        List<Reservation> currentReservations = List.of(Reservation.builder().reservationDate(LocalDate.of(2022, 11, 23)).reservationStartTime(LocalTime.of(8, 0)).reservationEndTime(LocalTime.of(8, 45)).build());
-
-        return reservationDatesList
+        return reservableDatesSchedule
                 .stream()
                 .map(date -> {
+
+                            List<Reservation> applicableReservationDataDtos = reservationDataDtos
+                                    .stream()
+                                    .filter(reservation -> reservation.getReservationDate().equals(DayOfWeek.from(date)))
+                                    .collect(Collectors.toList());
 
                             List<BusinessHoursDto> applicableBusinessHoursDtos = businessHoursDtos
                                     .stream()
                                     .filter(businessHoursDto -> businessHoursDto.getDayOfWeek().equals(DayOfWeek.from(date)))
                                     .collect(Collectors.toList());
 
-                            List<ReservableTimeWindowWithOccupancyInfoDto> reservableTimeWindowWithOccupancyInfoDtoList = getReservableTimeWindowsForDayOfWeek(duration, applicableBusinessHoursDtos)
-                                    .stream()
-                                    .peek(reservableTimeWindowWithOccupancyInfoDto -> {
-                                        if (currentReservations.stream().anyMatch(currentReservation -> currentReservation.getReservationDate().equals(date) && currentReservation.getReservationStartTime().equals(reservableTimeWindowWithOccupancyInfoDto.getReservationStartTime()) && currentReservation.getReservationEndTime().equals(reservableTimeWindowWithOccupancyInfoDto.getReservationEndTime()))) {
-                                            reservableTimeWindowWithOccupancyInfoDto.setOccupied(true);
-                                        }
-                                    })
-                                    .collect(Collectors.toList());
+                            List<ReservableTimeWindowDto> reservableTimeWindowDtos = getReservableTimeWindowsForDayOfWeek(duration, applicableBusinessHoursDtos, applicableReservationDataDtos);
 
-                            return ReservationDataForADateDto.builder().date(date).reservableTimeWindowWithOccupancyInfoDtoList(reservableTimeWindowWithOccupancyInfoDtoList).build();}
+                            return ReservationDataForADateDto.builder().date(date).reservableTimeWindowDtos(reservableTimeWindowDtos).build();}
                 )
                 .collect(Collectors.toList());
     }
 
-    private List<ReservableTimeWindowWithOccupancyInfoDto> getReservableTimeWindowsForDayOfWeek(Duration duration, List<BusinessHoursDto> applicableBusinessHoursDtos) {
+    private List<ReservableTimeWindowDto> getReservableTimeWindowsForDayOfWeek(Duration duration, List<BusinessHoursDto> applicableBusinessHoursDtos, List<Reservation> applicableReservationDataDtos) {
 
-        List<ReservableTimeWindowWithOccupancyInfoDto> reservableTimeWindowsForDayOfWeek = new ArrayList<>();
+        List<ReservableTimeWindowDto> reservableTimeWindowsForDayOfWeek = new ArrayList<>();
+
+        //applicableReservationDataDtos
 
         applicableBusinessHoursDtos.forEach(applicableBusinessHoursDto -> {
+
             LocalTime openingTime = applicableBusinessHoursDto.getOpeningTime();
             LocalTime closingTime = applicableBusinessHoursDto.getClosingTime();
+            Range<LocalTime> openingHours = Range.between(openingTime, closingTime);
             LocalTime computationTime = openingTime;
             while (closingTime.isAfter(computationTime)) {
                 LocalTime adjustedComputationTime = computationTime.plus(duration.toMinutes(), ChronoUnit.MINUTES);
                 if (adjustedComputationTime.isBefore(closingTime) || adjustedComputationTime.equals(closingTime)) {
-                    reservableTimeWindowsForDayOfWeek.add(ReservableTimeWindowWithOccupancyInfoDto.builder().reservationStartTime(computationTime).reservationEndTime(adjustedComputationTime).build());
+                    applicableReservationDataDtos
+                            .stream()
+                            //.map(reservation ->
+
+                            .collect(Collectors.toList());
+
+                    reservableTimeWindowsForDayOfWeek.add(ReservableTimeWindowDto.builder().reservationStartTime(computationTime).reservationEndTime(adjustedComputationTime).build());
                 }
                 computationTime = adjustedComputationTime;
             }

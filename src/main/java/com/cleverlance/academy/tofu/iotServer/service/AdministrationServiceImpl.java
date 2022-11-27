@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ public class AdministrationServiceImpl implements AdministrationService {
     @Transactional
     @Override
     public List<BusinessHoursDto> setBusinessHours(List<BusinessHoursDto> businessHoursDtos) {
+        //todo validate start is not before end + start != end
         businessHoursRepository.deleteAllInBatch();
         List<BusinessHours> newBusinessHours= businessHoursRepository.saveAll(businessHoursDtos
                 .stream()
@@ -56,6 +58,7 @@ public class AdministrationServiceImpl implements AdministrationService {
                 .stream()
                 .map(durationOfReservableTimeWindows -> durationOfReservableTimeWindowsMapper.fromDurationOfReservableTimeWindowsToDurationOfReservableTimeWindowsDto(durationOfReservableTimeWindows))
                 .collect(Collectors.toList());
+
     }
 
     @Override

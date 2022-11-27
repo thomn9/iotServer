@@ -1,0 +1,102 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 1
+      author: thulka
+      changes:
+        - createTable:
+            tableName: business_hours
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: day_of_week
+                  type: VARCHAR
+              - column:
+                  name: opening_time
+                  type: TIME
+              - column:
+                  name: closing_time
+                  type: TIME
+
+  - changeSet:
+      id: 2
+      author: thulka
+      changes:
+        - loadData:
+            file: "data/businessHours.csv"
+            relativeToChangelogFile: "true"
+            primaryKey: "id"
+            tableName: "business_hours"
+
+  - changeSet:
+      id: 3
+      author: thulka
+      changes:
+        - createTable:
+            tableName: duration_of_reservable_time_windows
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: duration
+                  type: VARCHAR
+
+  - changeSet:
+      id: 4
+      author: thulka
+      changes:
+        - loadData:
+            file: "data/durationOfReservableTimeWindows.csv"
+            relativeToChangelogFile: "true"
+            primaryKey: "id"
+            tableName: "duration_of_reservable_time_windows"
+
+  - changeSet:
+      id: 5
+      author: thulka
+      changes:
+        - createTable:
+            tableName: reservation
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: reservation_date
+                  type: DATE
+              - column:
+                  name: reservation_start
+                  type: TIME
+              - column:
+                  name: reservation_end
+                  type: TIME
+              - column:
+                  name: reservation_code
+                  type: UUID
+              - column:
+                  name: first_name
+                  type: VARCHAR
+              - column:
+                  name: last_name
+                  type: VARCHAR
+              - column:
+                  name: email
+                  type: VARCHAR
+              - column:
+                  name: phone_number
+                  type: VARCHAR

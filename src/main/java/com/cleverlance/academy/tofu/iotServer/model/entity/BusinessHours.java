@@ -1,6 +1,7 @@
 package com.cleverlance.academy.tofu.iotServer.model.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.DayOfWeek;
@@ -8,11 +9,12 @@ import java.time.LocalTime;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "business_hours")
 public class BusinessHours {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
