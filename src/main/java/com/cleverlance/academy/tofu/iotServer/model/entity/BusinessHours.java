@@ -1,7 +1,10 @@
 package com.cleverlance.academy.tofu.iotServer.model.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.Range;
 
 import javax.persistence.*;
 import java.time.DayOfWeek;
@@ -22,9 +25,7 @@ public class BusinessHours {
     @Enumerated(EnumType.STRING)
     private DayOfWeek dayOfWeek;
 
-    @Column(name = "opening_time")
-    private LocalTime openingTime;
+    @Column(name = "business_hours_time_range")
+    private Range<LocalTime> businessHoursTimeRange;
 
-    @Column(name = "closing_time")
-    private LocalTime closingTime;
 }

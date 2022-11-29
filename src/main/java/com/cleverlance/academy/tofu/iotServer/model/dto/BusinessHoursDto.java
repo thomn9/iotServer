@@ -1,9 +1,10 @@
 package com.cleverlance.academy.tofu.iotServer.model.dto;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.Range;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -17,8 +18,8 @@ public class BusinessHoursDto {
     private DayOfWeek dayOfWeek;
 
     @NonNull
-    private LocalTime openingTime;
+    @JsonDeserialize(using = BusinessHoursDtoDeserializer.class)
+    @JsonSerialize(using = BusinessHoursDtoSerializer.class)
+    private Range<LocalTime> businessHoursTimeRange;
 
-    @NonNull
-    private LocalTime closingTime;
 }

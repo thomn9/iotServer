@@ -18,21 +18,18 @@ databaseChangeLog:
                   name: day_of_week
                   type: VARCHAR
               - column:
-                  name: opening_time
-                  type: TIME
-              - column:
-                  name: closing_time
-                  type: TIME
+                  name: business_hours_time_range
+                  type: VARCHAR
 
-  - changeSet:
-      id: 2
-      author: thulka
-      changes:
-        - loadData:
-            file: "data/businessHours.csv"
-            relativeToChangelogFile: "true"
-            primaryKey: "id"
-            tableName: "business_hours"
+      #- changeSet:
+      #id: 2
+      #author: thulka
+        #changes:
+            #- loadData:
+            #file: "data/businessHours.csv"
+            #relativeToChangelogFile: "true"
+            #primaryKey: "id"
+            #tableName: "business_hours"
 
   - changeSet:
       id: 3

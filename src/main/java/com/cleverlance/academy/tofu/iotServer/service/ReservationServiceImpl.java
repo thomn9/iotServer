@@ -41,8 +41,8 @@ public class ReservationServiceImpl implements ReservationService {
         List<BusinessHoursDto> businessHoursDtos = administrationService.getBusinessHours();
 
         Duration duration = durationOfReservableTimeWindowsRepository
-                .getById(durationOfReservableTimeWindowId)
-                .getDuration();
+                .findById(durationOfReservableTimeWindowId)
+                .get().getDuration();
 
         return reservableDatesSchedule
                 .stream()
@@ -65,7 +65,7 @@ public class ReservationServiceImpl implements ReservationService {
                 .collect(Collectors.toList());
     }
 
-    private List<ReservableTimeWindowDto> getReservableTimeWindowsForDayOfWeek(Duration duration, List<BusinessHoursDto> applicableBusinessHoursDtos, List<Reservation> applicableReservationDataDtos) {
+   private List<ReservableTimeWindowDto> getReservableTimeWindowsForDayOfWeek(Duration duration, List<BusinessHoursDto> applicableBusinessHoursDtos, List<Reservation> applicableReservationDataDtos) {
 
         List<ReservableTimeWindowDto> reservableTimeWindowsForDayOfWeek = new ArrayList<>();
 
@@ -73,8 +73,8 @@ public class ReservationServiceImpl implements ReservationService {
 
         applicableBusinessHoursDtos.forEach(applicableBusinessHoursDto -> {
 
-            LocalTime openingTime = applicableBusinessHoursDto.getOpeningTime();
-            LocalTime closingTime = applicableBusinessHoursDto.getClosingTime();
+            LocalTime openingTime = null; //applicableBusinessHoursDto.getOpeningTime();
+            LocalTime closingTime = null; //applicableBusinessHoursDto.getClosingTime();
             Range<LocalTime> openingHours = Range.between(openingTime, closingTime);
             LocalTime computationTime = openingTime;
             while (closingTime.isAfter(computationTime)) {
