@@ -6,13 +6,12 @@ import com.cleverlance.academy.tofu.iotServer.model.dto.DurationOfReservableTime
 import com.cleverlance.academy.tofu.iotServer.model.entity.BusinessHours;
 import com.cleverlance.academy.tofu.iotServer.repository.JpaBusinessHoursRepository;
 import com.cleverlance.academy.tofu.iotServer.repository.JpaDurationOfReservableTimeWindowsRepository;
-import com.cleverlance.academy.tofu.iotServer.service.mapper.BusinessHoursMapper;
 import com.cleverlance.academy.tofu.iotServer.service.mapper.DurationOfReservableTimeWindowsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Types;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,9 +22,8 @@ public class AdministrationServiceImpl implements AdministrationService {
     private JpaBusinessHoursRepository businessHoursRepository;
     @Autowired
     private JpaDurationOfReservableTimeWindowsRepository durationOfReservableTimeWindowsRepository;
-
     @Autowired
-    private BusinessHoursMapper businessHoursMapper;
+    private ConversionService conversionService;
     @Autowired
     private DurationOfReservableTimeWindowsMapper durationOfReservableTimeWindowsMapper;
 
@@ -33,7 +31,7 @@ public class AdministrationServiceImpl implements AdministrationService {
     public List<BusinessHoursDto> getBusinessHours() {
         return businessHoursRepository.findAll()
                 .stream()
-                .map(businessHours -> businessHoursMapper.fromBusinessHoursToBusinessHoursDto(businessHours))
+                .map(businessHours -> conversionService.convert(businessHours,BusinessHoursDto.class))
                 .collect(Collectors.toList());
     }
 
@@ -44,11 +42,11 @@ public class AdministrationServiceImpl implements AdministrationService {
         businessHoursRepository.deleteAllInBatch();
         List<BusinessHours> newBusinessHours= businessHoursRepository.saveAll(businessHoursDtos
                 .stream()
-                .map(businessHoursDto -> businessHoursMapper.toBusinessHoursFromBusinessHoursDto(businessHoursDto))
+                .map(businessHoursDto -> conversionService.convert(businessHoursDto,BusinessHours.class))
                 .collect(Collectors.toList()));
         return newBusinessHours
                 .stream()
-                .map(businessHours -> businessHoursMapper.fromBusinessHoursToBusinessHoursDto(businessHours))
+                .map(businessHours -> conversionService.convert(businessHours,BusinessHoursDto.class))
                 .collect(Collectors.toList());
     }
 

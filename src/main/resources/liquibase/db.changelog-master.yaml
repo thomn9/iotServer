@@ -18,18 +18,21 @@ databaseChangeLog:
                   name: day_of_week
                   type: VARCHAR
               - column:
-                  name: business_hours_time_range
-                  type: VARCHAR
+                  name: opening_time
+                  type: TIME
+              - column:
+                  name: closing_time
+                  type: TIME
 
-      #- changeSet:
-      #id: 2
-      #author: thulka
-        #changes:
-            #- loadData:
-            #file: "data/businessHours.csv"
-            #relativeToChangelogFile: "true"
-            #primaryKey: "id"
-            #tableName: "business_hours"
+  - changeSet:
+      id: 2
+      author: thulka
+      changes:
+        - loadData:
+            file: "data/business-hours.csv"
+            relativeToChangelogFile: "true"
+            primaryKey: "id"
+            tableName: "business_hours"
 
   - changeSet:
       id: 3
@@ -54,7 +57,7 @@ databaseChangeLog:
       author: thulka
       changes:
         - loadData:
-            file: "data/durationOfReservableTimeWindows.csv"
+            file: "data/duration-of-reservable-time-windows.csv"
             relativeToChangelogFile: "true"
             primaryKey: "id"
             tableName: "duration_of_reservable_time_windows"

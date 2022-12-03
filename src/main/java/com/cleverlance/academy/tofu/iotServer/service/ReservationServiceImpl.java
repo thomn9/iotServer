@@ -35,9 +35,11 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<ReservationDataForADateDto> getReservableTimeWindowsSchedule(Long durationOfReservableTimeWindowId) {
         LocalDate today = LocalDate.now();
+
         List<LocalDate> reservableDatesSchedule = today.datesUntil(today.plusDays(30)).collect(Collectors.toList());
-        //todo limit db query only to schedule period
-        List<Reservation> reservationDataDtos = reservationRepository.findAll();
+
+        List<Reservation> reservationDataDtos = reservationRepository.findByReservationDateIsBetween(today,reservableDatesSchedule.get(reservableDatesSchedule.size()-1));
+
         List<BusinessHoursDto> businessHoursDtos = administrationService.getBusinessHours();
 
         Duration duration = durationOfReservableTimeWindowsRepository

@@ -4,7 +4,6 @@ package com.cleverlance.academy.tofu.iotServer.model.entity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.Range;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -25,9 +24,11 @@ public class Reservation {
     @Column(name = "reservation_date")
     private LocalDate reservationDate;
 
-    @Column(name = "reservation_time_range")
-    private Range<LocalTime> reservationTimeRange;
+    @Column(name = "reservation_start")
+    private LocalTime reservationStart;
 
+    @Column(name = "reservation_end")
+    private LocalTime reservationEnd;
     @Embedded
     private Reservee reservee;
 
