@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-public class ReservationDataDetailDto extends ReservationDataDto {
+public class ReservationDetailDto extends ReservationBaseDto implements IdentityAware<Long> {
 
     private Long id;
 

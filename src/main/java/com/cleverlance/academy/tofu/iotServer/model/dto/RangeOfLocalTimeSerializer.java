@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Range;
 import java.io.IOException;
 import java.time.LocalTime;
 
-public class BusinessHoursDtoSerializer extends JsonSerializer<Range<LocalTime>> {
+public class RangeOfLocalTimeSerializer extends JsonSerializer<Range<LocalTime>> {
 
     @Override
     public void serialize(Range<LocalTime> localTimeRange, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {

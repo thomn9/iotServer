@@ -1,8 +1,11 @@
 package com.cleverlance.academy.tofu.iotServer.model.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.Range;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -11,16 +14,15 @@ import java.time.LocalTime;
 @Data
 @SuperBuilder
 @NoArgsConstructor
-public class ReservationDataDto {
+public class ReservationBaseDto {
 
     @NotNull
     private LocalDate reservationDate;
 
     @NotNull
-    private LocalTime reservationStartTime;
-
-    @NotNull
-    private LocalTime reservationEndTime;
+    @JsonDeserialize(using = RangeOfLocatTimeDeserializer.class)
+    @JsonSerialize(using = RangeOfLocalTimeSerializer.class)
+    private Range<LocalTime> reservationTimeRange;
 
     @NotNull
     private ReserveeDto reservee;

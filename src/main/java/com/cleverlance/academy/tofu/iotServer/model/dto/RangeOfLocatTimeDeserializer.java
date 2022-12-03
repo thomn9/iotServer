@@ -11,7 +11,7 @@ import org.apache.commons.lang3.Range;
 import java.io.IOException;
 import java.time.LocalTime;
 
-public class BusinessHoursDtoDeserializer extends JsonDeserializer<Range<LocalTime>> {
+public class RangeOfLocatTimeDeserializer extends JsonDeserializer<Range<LocalTime>> {
 
     @Override
     public Range<LocalTime> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {

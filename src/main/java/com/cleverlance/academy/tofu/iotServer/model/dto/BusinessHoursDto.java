@@ -18,8 +18,8 @@ public class BusinessHoursDto {
     private DayOfWeek dayOfWeek;
 
     @NonNull
-    @JsonDeserialize(using = BusinessHoursDtoDeserializer.class)
-    @JsonSerialize(using = BusinessHoursDtoSerializer.class)
+    @JsonDeserialize(using = RangeOfLocatTimeDeserializer.class)
+    @JsonSerialize(using = RangeOfLocalTimeSerializer.class)
     private Range<LocalTime> businessHoursTimeRange;
 
 }

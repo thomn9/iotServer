@@ -1,18 +1,18 @@
 package com.cleverlance.academy.tofu.iotServer.service;
 
 
-import com.cleverlance.academy.tofu.iotServer.model.dto.ReservationDataDetailDto;
-import com.cleverlance.academy.tofu.iotServer.model.dto.ReservationDataDto;
-import com.cleverlance.academy.tofu.iotServer.model.dto.ReservationDataForADateDto;
+import com.cleverlance.academy.tofu.iotServer.model.dto.ReservationBaseDto;
+import com.cleverlance.academy.tofu.iotServer.model.dto.ReservationDetailDto;
+import com.cleverlance.academy.tofu.iotServer.model.dto.ReservableTimeWindowForADateDto;
 
 import java.util.List;
 
 public interface ReservationService {
-    List<ReservationDataForADateDto> getReservableTimeWindowsSchedule(Long durationOfReservableTimeWindowId);
+    List<ReservableTimeWindowForADateDto> getReservableTimeWindowsSchedule(Long durationOfReservableTimeWindowId);
 
-    ReservationDataDetailDto createReservation(ReservationDataDto reservationDataDto);
+    ReservationDetailDto createReservation(ReservationBaseDto reservationBaseDto);
 
-    ReservationDataDetailDto getReservationDetail(String reservationCode);
+    ReservationDetailDto getReservationDetail(String reservationCode);
 
     void deleteReservation(String reservationCode);
 

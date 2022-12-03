@@ -1,8 +1,8 @@
 package com.cleverlance.academy.tofu.iotServer.controller;
 
-import com.cleverlance.academy.tofu.iotServer.model.dto.ReservationDataDto;
-import com.cleverlance.academy.tofu.iotServer.model.dto.ReservationDataForADateDto;
-import com.cleverlance.academy.tofu.iotServer.model.dto.ReservationDataDetailDto;
+import com.cleverlance.academy.tofu.iotServer.model.dto.ReservationBaseDto;
+import com.cleverlance.academy.tofu.iotServer.model.dto.ReservableTimeWindowForADateDto;
+import com.cleverlance.academy.tofu.iotServer.model.dto.ReservationDetailDto;
 import com.cleverlance.academy.tofu.iotServer.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,17 +18,17 @@ public class ReservationController {
     private ReservationService reservationService;
 
     @GetMapping("/reservable-time-windows-schedule/{durationOfReservableTimeWindowId}")
-    public ResponseEntity<List<ReservationDataForADateDto>> getReservableTimeWindowsSchedule(@PathVariable Long durationOfReservableTimeWindowId) {
+    public ResponseEntity<List<ReservableTimeWindowForADateDto>> getReservableTimeWindowsSchedule(@PathVariable Long durationOfReservableTimeWindowId) {
         return ResponseEntity.ok(reservationService.getReservableTimeWindowsSchedule(durationOfReservableTimeWindowId));
     }
 
     @PostMapping("/reserve")
-    public ResponseEntity<ReservationDataDetailDto> createReservation(@Valid @RequestBody ReservationDataDto reservationDataDto) {
-        return ResponseEntity.ok(reservationService.createReservation(reservationDataDto));
+    public ResponseEntity<ReservationDetailDto> createReservation(@Valid @RequestBody ReservationBaseDto reservationBaseDto) {
+        return ResponseEntity.ok(reservationService.createReservation(reservationBaseDto));
     }
 
     @GetMapping("/reservation-detail")
-    public ResponseEntity<ReservationDataDetailDto> getReservationDetail(@RequestParam String reservationCode) {
+    public ResponseEntity<ReservationDetailDto> getReservationDetail(@RequestParam String reservationCode) {
         return ResponseEntity.ok(reservationService.getReservationDetail(reservationCode));
     }
 
