@@ -20,7 +20,7 @@ public class BusinessHours {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "day_of_week", unique = true)
+    @Column(name = "day_of_week")
     @Enumerated(EnumType.STRING)
     private DayOfWeek dayOfWeek;
 

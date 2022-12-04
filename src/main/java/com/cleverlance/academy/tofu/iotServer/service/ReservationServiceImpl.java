@@ -39,7 +39,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         List<LocalDate> reservableDatesSchedule = today.datesUntil(today.plusDays(30)).collect(Collectors.toList());
 
-        List<Reservation> reservationDtos = reservationRepository.findByReservationDateIsBetween(today,reservableDatesSchedule.get(reservableDatesSchedule.size()-1));
+        List<Reservation> reservationDtos = reservationRepository.findByReservationDateBetween(today,reservableDatesSchedule.get(reservableDatesSchedule.size()-1));
 
         List<BusinessHoursDto> businessHoursDtos = administrationService.getBusinessHours();
 
@@ -88,29 +88,23 @@ public class ReservationServiceImpl implements ReservationService {
                         .stream()
                         .filter(reservationDetailDto -> finalReservableTimeWindow.isOverlappedBy(reservationDetailDto.getReservationTimeRange()))
                         .collect(Collectors.toList());
-                if(overlappingReservations.isEmpty()){
+                long countOfNonZeroIntersectionOverlappingReservations = overlappingReservations
+                        .stream()
+                        .filter(reservationDetailDto -> !reservationDetailDto.getReservationTimeRange().isStartedBy(finalReservableTimeWindow.getMaximum()) || !reservationDetailDto.getReservationTimeRange().isEndedBy(finalReservableTimeWindow.getMinimum()))
+                        .count();
+                if(overlappingReservations.isEmpty() || countOfNonZeroIntersectionOverlappingReservations == 0L){
                     reservableTimeWindowsForDayOfWeek.add(ReservableTimeWindowDto.builder().reservableTimeRange(reservableTimeWindow).build());
                     LocalTime nextStartTimeOfReservableTimeWindow = reservableTimeWindow.getMaximum();
                     reservableTimeWindow = RangeOfLocalTimeFactory.getNewRangeOfLocalTime(nextStartTimeOfReservableTimeWindow,nextStartTimeOfReservableTimeWindow.plus(duration.toMinutes(), ChronoUnit.MINUTES));
                 } else {
-                    long countOfNonZeroIntersectionOverlappingReservations = overlappingReservations
+                    LocalTime nextStartTimeOfReservableTimeWindow = overlappingReservations
                             .stream()
-                            .filter(reservationDetailDto -> !reservationDetailDto.getReservationTimeRange().isStartedBy(finalReservableTimeWindow.getMaximum()) || !reservationDetailDto.getReservationTimeRange().isEndedBy(finalReservableTimeWindow.getMinimum()))
-                            .count();
-                    if(countOfNonZeroIntersectionOverlappingReservations == 0L) {
-                        reservableTimeWindowsForDayOfWeek.add(ReservableTimeWindowDto.builder().reservableTimeRange(reservableTimeWindow).build());
-                        LocalTime nextStartTimeOfReservableTimeWindow = reservableTimeWindow.getMaximum();
-                        reservableTimeWindow = RangeOfLocalTimeFactory.getNewRangeOfLocalTime(nextStartTimeOfReservableTimeWindow,nextStartTimeOfReservableTimeWindow.plus(duration.toMinutes(), ChronoUnit.MINUTES));
-                    } else {
-                        LocalTime nextStartTimeOfReservableTimeWindow = overlappingReservations
-                                .stream()
-                                .max((reservationDetailDtoA,reservationDetailDtoB) ->
-                                        reservationDetailDtoA.getReservationTimeRange().getComparator().compare(reservationDetailDtoA.getReservationTimeRange().getMaximum(), reservationDetailDtoB.getReservationTimeRange().getMaximum()))
-                                .get()
-                                .getReservationTimeRange()
-                                .getMaximum();
-                        reservableTimeWindow = RangeOfLocalTimeFactory.getNewRangeOfLocalTime(nextStartTimeOfReservableTimeWindow,nextStartTimeOfReservableTimeWindow.plus(duration.toMinutes(), ChronoUnit.MINUTES));
-                    }
+                            .max((reservationDetailDtoA,reservationDetailDtoB) ->
+                                    reservationDetailDtoA.getReservationTimeRange().getComparator().compare(reservationDetailDtoA.getReservationTimeRange().getMaximum(), reservationDetailDtoB.getReservationTimeRange().getMaximum()))
+                            .get()
+                            .getReservationTimeRange()
+                            .getMaximum();
+                    reservableTimeWindow = RangeOfLocalTimeFactory.getNewRangeOfLocalTime(nextStartTimeOfReservableTimeWindow,nextStartTimeOfReservableTimeWindow.plus(duration.toMinutes(), ChronoUnit.MINUTES));
                 }
             }
 
@@ -140,6 +134,7 @@ public class ReservationServiceImpl implements ReservationService {
     public ReservationDetailDto createReservation(ReservationBaseDto reservationBaseDto) {
         Reservation reservation = conversionService.convert(reservationBaseDto, Reservation.class);
         reservation.setReservationCode(UUID.randomUUID().toString());
+        //todo prevent overlapping reservation
         return conversionService.convert(reservationRepository.save(reservation),ReservationDetailDto.class);
     }
 

@@ -5,7 +5,9 @@ import com.cleverlance.academy.tofu.iotServer.model.entity.Reservation;
 import com.cleverlance.academy.tofu.iotServer.service.mapper.ReserveeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ReservationBaseDtoToReservationConverter implements Converter<ReservationBaseDto, Reservation> {
 
     @Autowired
