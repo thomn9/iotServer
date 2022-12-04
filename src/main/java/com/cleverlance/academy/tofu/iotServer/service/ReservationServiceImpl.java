@@ -68,11 +68,11 @@ public class ReservationServiceImpl implements ReservationService {
                 .collect(Collectors.toList());
     }
 
-   private List<ReservableTimeWindowDto> getReservableTimeWindowsForDayOfWeek(Duration duration, List<BusinessHoursDto> applicableBusinessHoursDtos, List<Reservation> applicableReservation) {
+   private List<ReservableTimeWindowDto> getReservableTimeWindowsForDayOfWeek(Duration duration, List<BusinessHoursDto> applicableBusinessHoursDtos, List<Reservation> applicableReservations) {
 
         List<ReservableTimeWindowDto> reservableTimeWindowsForDayOfWeek = new ArrayList<>();
 
-        List<ReservationDetailDto> reservationDetailDtos = applicableReservation
+        List<ReservationDetailDto> reservationDetailDtos = applicableReservations
                 .stream()
                 .map(reservation -> conversionService.convert(reservation,ReservationDetailDto.class))
                 .collect(Collectors.toList());
@@ -90,7 +90,7 @@ public class ReservationServiceImpl implements ReservationService {
                         .collect(Collectors.toList());
                 long countOfNonZeroIntersectionOverlappingReservations = overlappingReservations
                         .stream()
-                        .filter(reservationDetailDto -> !reservationDetailDto.getReservationTimeRange().isStartedBy(finalReservableTimeWindow.getMaximum()) || !reservationDetailDto.getReservationTimeRange().isEndedBy(finalReservableTimeWindow.getMinimum()))
+                        .filter(reservationDetailDto -> !reservationDetailDto.getReservationTimeRange().isStartedBy(finalReservableTimeWindow.getMaximum()) && !reservationDetailDto.getReservationTimeRange().isEndedBy(finalReservableTimeWindow.getMinimum()))
                         .count();
                 if(overlappingReservations.isEmpty() || countOfNonZeroIntersectionOverlappingReservations == 0L){
                     reservableTimeWindowsForDayOfWeek.add(ReservableTimeWindowDto.builder().reservableTimeRange(reservableTimeWindow).build());
@@ -114,9 +114,26 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ReservationDetailDto createReservation(ReservationBaseDto reservationBaseDto) {
+        //todo must match reservable time window (duration) and businness hours + date
+        List<Reservation> existingReservationsForGivenDate = reservationRepository.findByReservationDate(reservationBaseDto.getReservationDate());
+        List<ReservationDetailDto> reservationDetailDtos = existingReservationsForGivenDate
+                .stream()
+                .map(reservation -> conversionService.convert(reservation,ReservationDetailDto.class))
+                .collect(Collectors.toList());
+        List<ReservationDetailDto> overlappingReservations = reservationDetailDtos
+                .stream()
+                .filter(reservationDetailDto -> reservationBaseDto.getReservationTimeRange().isOverlappedBy(reservationDetailDto.getReservationTimeRange()))
+                .collect(Collectors.toList());
+        long countOfNonZeroIntersectionOverlappingReservations = overlappingReservations
+                .stream()
+                .filter(reservationDetailDto -> !reservationDetailDto.getReservationTimeRange().isStartedBy(reservationBaseDto.getReservationTimeRange().getMaximum()) && !reservationDetailDto.getReservationTimeRange().isEndedBy(reservationBaseDto.getReservationTimeRange().getMinimum()))
+                .count();
+        if (countOfNonZeroIntersectionOverlappingReservations != 0) {
+            //todo how to propagate errors
+            throw new Error();
+        }
         Reservation reservation = conversionService.convert(reservationBaseDto, Reservation.class);
         reservation.setReservationCode(UUID.randomUUID().toString());
-        //todo prevent overlapping reservation
         return conversionService.convert(reservationRepository.save(reservation),ReservationDetailDto.class);
     }
 
