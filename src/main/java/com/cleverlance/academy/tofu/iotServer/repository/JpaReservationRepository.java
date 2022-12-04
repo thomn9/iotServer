@@ -12,5 +12,5 @@ public interface JpaReservationRepository extends JpaRepository<Reservation, Lon
 
     Reservation getByReservationCode(String reservationCode);
 
-    List<Reservation> findByReservationDateBetween(LocalDate initialDate, LocalDate endDate);
+    List<Reservation> findByReservationDateBetween(LocalDate from, LocalDate to);
 }

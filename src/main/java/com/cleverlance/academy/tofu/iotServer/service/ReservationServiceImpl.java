@@ -53,7 +53,7 @@ public class ReservationServiceImpl implements ReservationService {
 
                             List<Reservation> applicableReservationDtos = reservationDtos
                                     .stream()
-                                    .filter(reservation -> reservation.getReservationDate().equals(DayOfWeek.from(date)))
+                                    .filter(reservation -> reservation.getReservationDate().equals(date))
                                     .collect(Collectors.toList());
 
                             List<BusinessHoursDto> applicableBusinessHoursDtos = businessHoursDtos
@@ -107,24 +107,6 @@ public class ReservationServiceImpl implements ReservationService {
                     reservableTimeWindow = RangeOfLocalTimeFactory.getNewRangeOfLocalTime(nextStartTimeOfReservableTimeWindow,nextStartTimeOfReservableTimeWindow.plus(duration.toMinutes(), ChronoUnit.MINUTES));
                 }
             }
-
-            //todo delete old
-            /*LocalTime openingTime = applicableBusinessHoursDto.getBusinessHoursTimeRange().getMinimum();
-            LocalTime closingTime = applicableBusinessHoursDto.getBusinessHoursTimeRange().getMaximum();
-            LocalTime computationTime = openingTime;
-            while (closingTime.isAfter(computationTime)) {
-                LocalTime adjustedComputationTime = computationTime.plus(duration.toMinutes(), ChronoUnit.MINUTES);
-                if (adjustedComputationTime.isBefore(closingTime) || adjustedComputationTime.equals(closingTime)) {
-                    applicableReservationDataDtos
-                            .stream()
-                            //.map(reservation ->
-
-                            .collect(Collectors.toList());
-
-                    reservableTimeWindowsForDayOfWeek.add(ReservableTimeWindowDto.builder().reservableTimeRange(RangeOfLocalTimeFactory.getNewRangeOfLocalTime(computationTime,adjustedComputationTime)).build());
-                }
-                computationTime = adjustedComputationTime;
-            }*/
         });
 
         return reservableTimeWindowsForDayOfWeek;
