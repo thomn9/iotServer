@@ -1,7 +1,6 @@
 package com.cleverlance.academy.tofu.iotServer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.Range;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
