@@ -112,6 +112,7 @@ public class ReservationServiceImpl implements ReservationService {
         return reservableTimeWindowsForDayOfWeek;
     }
 
+    @Transactional
     @Override
     public ReservationDetailDto createReservation(ReservationBaseDto reservationBaseDto) {
         //todo must match reservable time window (duration) and businness hours + date
