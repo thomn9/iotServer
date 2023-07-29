@@ -8,11 +8,11 @@
 		<version>2.7.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.cleverlance.academy.tofu</groupId>
-	<artifactId>iotServer</artifactId>
+	<groupId>cz.reservation.app</groupId>
+	<artifactId>reservationApp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>iotServer</name>
-	<description>Demo project for Spring Boot</description>
+	<name>reservationApp</name>
+	<description>Reservation application</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>

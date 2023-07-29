@@ -1,0 +1,14 @@
+package cz.reservation.app.service.mapper;
+
+import cz.reservation.app.model.dto.DurationOfReservableTimeWindowsBaseDto;
+import cz.reservation.app.model.dto.DurationOfReservableTimeWindowsDto;
+import cz.reservation.app.model.entity.DurationOfReservableTimeWindows;
+import org.mapstruct.Mapper;
+
+@Mapper
+public interface DurationOfReservableTimeWindowsMapper {
+
+    DurationOfReservableTimeWindows toDurationOfReservableTimeWindowsFromDurationOfReservableTimeWindowsBaseDto(DurationOfReservableTimeWindowsBaseDto durationOfReservableTimeWindowsBaseDto);
+
+    DurationOfReservableTimeWindowsDto fromDurationOfReservableTimeWindowsToDurationOfReservableTimeWindowsDto(DurationOfReservableTimeWindows durationOfReservableTimeWindows);
+}

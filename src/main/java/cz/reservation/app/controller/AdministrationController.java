@@ -1,0 +1,47 @@
+package cz.reservation.app.controller;
+
+import cz.reservation.app.model.dto.BusinessHoursDto;
+import cz.reservation.app.model.dto.DurationOfReservableTimeWindowsBaseDto;
+import cz.reservation.app.model.dto.DurationOfReservableTimeWindowsDto;
+import cz.reservation.app.service.AdministrationService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+
+@Slf4j
+@RestController
+public class AdministrationController {
+    //todo validation error propagation to API
+    @Autowired
+    private AdministrationService administrationService;
+
+    @GetMapping("/business-hours")
+    public ResponseEntity<List<BusinessHoursDto>> getBusinessHours() {
+        return ResponseEntity.ok(administrationService.getBusinessHours());
+    }
+
+    @PutMapping("/business-hours")
+    public ResponseEntity<List<BusinessHoursDto>> setBusinessHours(@Valid @RequestBody List<BusinessHoursDto> businessHoursDtos) {
+        return ResponseEntity.ok(administrationService.setBusinessHours(businessHoursDtos));
+    }
+
+    @GetMapping("/duration-of-reservable-time-windows")
+    public ResponseEntity<List<DurationOfReservableTimeWindowsDto>> getDurationsOfReservableTimeWindows() {
+        return ResponseEntity.ok(administrationService.getDurationsOfReservableTimeWindows());
+    }
+
+    @PostMapping("/duration-of-reservable-time-windows")
+    public ResponseEntity<List<DurationOfReservableTimeWindowsDto>> createDurationOfReservableTimeWindows(@Valid @RequestBody DurationOfReservableTimeWindowsBaseDto durationOfReservableTimeWindowsBaseDto) {
+        return ResponseEntity.ok(administrationService.createDurationOfReservableTimeWindows(durationOfReservableTimeWindowsBaseDto));
+    }
+
+    @DeleteMapping("/duration-of-reservable-time-windows")
+    public ResponseEntity<List<DurationOfReservableTimeWindowsDto>> deleteDurationOfReservableTimeWindows(@RequestParam Long id) {
+        return ResponseEntity.ok(administrationService.deleteDurationOfReservableTimeWindows(id));
+    }
+
+}
