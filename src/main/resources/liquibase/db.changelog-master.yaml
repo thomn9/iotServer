@@ -80,18 +80,6 @@ databaseChangeLog:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: reservation_date
-                  type: DATE
-              - column:
-                  name: reservation_start
-                  type: TIME
-              - column:
-                  name: reservation_end
-                  type: TIME
-              - column:
-                  name: reservation_code
-                  type: UUID
-              - column:
                   name: first_name
                   type: VARCHAR
               - column:
@@ -103,3 +91,45 @@ databaseChangeLog:
               - column:
                   name: phone_number
                   type: VARCHAR
+              - column:
+                  name: reservation_code
+                  type: UUID
+
+  - changeSet:
+      id: 6
+      author: thulka
+      changes:
+        - createTable:
+            tableName: reservable_schedule
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: reservation_date
+                  type: DATE
+              - column:
+                  name: reservation_start
+                  type: TIME
+              - column:
+                  name: reservation_end
+                  type: TIME
+              - column:
+                  name: reservable_state
+                  type: VARCHAR
+              - column:
+                  name: service_definition_id
+                  type: BIGINT
+                  constraints:
+                    foreignKey: true
+                    nullable: false
+              - column:
+                  name: reservation_id
+                  type: BIGINT
+                  constraints:
+                    foreignKey: true
+                    nullable: true

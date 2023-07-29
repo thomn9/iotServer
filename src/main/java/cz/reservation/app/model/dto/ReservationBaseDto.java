@@ -1,15 +1,10 @@
 package cz.reservation.app.model.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.Range;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Data
 @SuperBuilder
@@ -17,13 +12,16 @@ import java.time.LocalTime;
 public class ReservationBaseDto {
 
     @NotNull
-    private LocalDate reservationDate;
+    private Long reservableScheduleId;
 
     @NotNull
-    @JsonDeserialize(using = RangeOfLocalTimeDeserializer.class)
-    @JsonSerialize(using = RangeOfLocalTimeSerializer.class)
-    private Range<LocalTime> reservationTimeRange;
+    private String firstName;
 
     @NotNull
-    private ReserveeDto reservee;
+    private String lastName;
+
+    @NotNull
+    private String email;
+
+    private String phoneNumber;
 }
