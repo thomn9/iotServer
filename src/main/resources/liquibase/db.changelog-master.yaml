@@ -39,7 +39,7 @@ databaseChangeLog:
       author: thulka
       changes:
         - createTable:
-            tableName: duration_of_reservable_time_windows
+            tableName: service_definition
             columns:
               - column:
                   name: id
@@ -51,16 +51,19 @@ databaseChangeLog:
               - column:
                   name: duration
                   type: VARCHAR
+              - column:
+                  name: service_name
+                  type: VARCHAR
 
   - changeSet:
       id: 4
       author: thulka
       changes:
         - loadData:
-            file: "data/duration-of-reservable-time-windows.csv"
+            file: "data/service-definition.csv"
             relativeToChangelogFile: "true"
             primaryKey: "id"
-            tableName: "duration_of_reservable_time_windows"
+            tableName: "service_definition"
 
   - changeSet:
       id: 5

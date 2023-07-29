@@ -1,12 +1,12 @@
 package cz.reservation.app.service;
 
 import cz.reservation.app.model.dto.BusinessHoursDto;
-import cz.reservation.app.model.dto.DurationOfReservableTimeWindowsBaseDto;
-import cz.reservation.app.model.dto.DurationOfReservableTimeWindowsDto;
+import cz.reservation.app.model.dto.ServiceDefinitionBaseDto;
+import cz.reservation.app.model.dto.ServiceDefinitionDto;
 import cz.reservation.app.model.entity.BusinessHours;
 import cz.reservation.app.repository.JpaBusinessHoursRepository;
-import cz.reservation.app.repository.JpaDurationOfReservableTimeWindowsRepository;
-import cz.reservation.app.service.mapper.DurationOfReservableTimeWindowsMapper;
+import cz.reservation.app.repository.JpaServiceDefinitionRepository;
+import cz.reservation.app.service.mapper.ServiceDefinitionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
@@ -21,11 +21,11 @@ public class AdministrationServiceImpl implements AdministrationService {
     @Autowired
     private JpaBusinessHoursRepository businessHoursRepository;
     @Autowired
-    private JpaDurationOfReservableTimeWindowsRepository durationOfReservableTimeWindowsRepository;
+    private JpaServiceDefinitionRepository serviceDefinitionRepository;
     @Autowired
     private ConversionService conversionService;
     @Autowired
-    private DurationOfReservableTimeWindowsMapper durationOfReservableTimeWindowsMapper;
+    private ServiceDefinitionMapper serviceDefinitionMapper;
 
     @Override
     public List<BusinessHoursDto> getBusinessHours() {
@@ -50,25 +50,25 @@ public class AdministrationServiceImpl implements AdministrationService {
     }
 
     @Override
-    public List<DurationOfReservableTimeWindowsDto> getDurationsOfReservableTimeWindows() {
-        return durationOfReservableTimeWindowsRepository.findAll()
+    public List<ServiceDefinitionDto> getServiceDefinitions() {
+        return serviceDefinitionRepository.findAll()
                 .stream()
-                .map(durationOfReservableTimeWindows -> durationOfReservableTimeWindowsMapper.fromDurationOfReservableTimeWindowsToDurationOfReservableTimeWindowsDto(durationOfReservableTimeWindows))
+                .map(serviceDefinition -> serviceDefinitionMapper.fromServiceDefinitionToServiceDefinitionDto(serviceDefinition))
                 .collect(Collectors.toList());
 
     }
 
     @Override
-    public List<DurationOfReservableTimeWindowsDto> createDurationOfReservableTimeWindows(DurationOfReservableTimeWindowsBaseDto durationOfReservableTimeWindowsBaseDto) {
-        durationOfReservableTimeWindowsRepository.save(durationOfReservableTimeWindowsMapper.toDurationOfReservableTimeWindowsFromDurationOfReservableTimeWindowsBaseDto(durationOfReservableTimeWindowsBaseDto));
-        return this.getDurationsOfReservableTimeWindows();
+    public List<ServiceDefinitionDto> createServiceDefinitions(ServiceDefinitionBaseDto serviceDefinitionBaseDto) {
+        serviceDefinitionRepository.save(serviceDefinitionMapper.toServiceDefinitionFromServiceDefinitionBaseDto(serviceDefinitionBaseDto));
+        return this.getServiceDefinitions();
 
     }
 
     @Transactional
     @Override
-    public List<DurationOfReservableTimeWindowsDto> deleteDurationOfReservableTimeWindows(Long id) {
-        durationOfReservableTimeWindowsRepository.deleteById(id);
-        return this.getDurationsOfReservableTimeWindows();
+    public List<ServiceDefinitionDto> deleteServiceDefinitions(Long id) {
+        serviceDefinitionRepository.deleteById(id);
+        return this.getServiceDefinitions();
     }
 }

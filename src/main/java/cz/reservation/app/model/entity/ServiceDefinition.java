@@ -9,8 +9,8 @@ import java.time.Duration;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "duration_of_reservable_time_windows")
-public class DurationOfReservableTimeWindows {
+@Table(name = "service_definition")
+public class ServiceDefinition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -18,4 +18,7 @@ public class DurationOfReservableTimeWindows {
 
     @Column(name = "duration")
     private Duration duration;
+
+    @Column(name = "service_name")
+    private String serviceName;
 }

@@ -2,7 +2,7 @@ package cz.reservation.app.service;
 
 import cz.reservation.app.model.RangeOfLocalTimeFactory;
 import cz.reservation.app.model.entity.Reservation;
-import cz.reservation.app.repository.JpaDurationOfReservableTimeWindowsRepository;
+import cz.reservation.app.repository.JpaServiceDefinitionRepository;
 import cz.reservation.app.repository.JpaReservationRepository;
 import cz.reservation.app.model.dto.BusinessHoursDto;
 import cz.reservation.app.model.dto.ReservableTimeWindowForADateDto;
@@ -28,7 +28,7 @@ public class ReservationServiceImpl implements ReservationService {
     private AdministrationService administrationService;
 
     @Autowired
-    private JpaDurationOfReservableTimeWindowsRepository durationOfReservableTimeWindowsRepository;
+    private JpaServiceDefinitionRepository durationOfReservableTimeWindowsRepository;
 
     @Autowired
     private JpaReservationRepository reservationRepository;

@@ -1,8 +1,8 @@
 package cz.reservation.app.controller;
 
 import cz.reservation.app.model.dto.BusinessHoursDto;
-import cz.reservation.app.model.dto.DurationOfReservableTimeWindowsBaseDto;
-import cz.reservation.app.model.dto.DurationOfReservableTimeWindowsDto;
+import cz.reservation.app.model.dto.ServiceDefinitionBaseDto;
+import cz.reservation.app.model.dto.ServiceDefinitionDto;
 import cz.reservation.app.service.AdministrationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,19 +29,19 @@ public class AdministrationController {
         return ResponseEntity.ok(administrationService.setBusinessHours(businessHoursDtos));
     }
 
-    @GetMapping("/duration-of-reservable-time-windows")
-    public ResponseEntity<List<DurationOfReservableTimeWindowsDto>> getDurationsOfReservableTimeWindows() {
-        return ResponseEntity.ok(administrationService.getDurationsOfReservableTimeWindows());
+    @GetMapping("/service-definitions")
+    public ResponseEntity<List<ServiceDefinitionDto>> getServiceDefinitions() {
+        return ResponseEntity.ok(administrationService.getServiceDefinitions());
     }
 
-    @PostMapping("/duration-of-reservable-time-windows")
-    public ResponseEntity<List<DurationOfReservableTimeWindowsDto>> createDurationOfReservableTimeWindows(@Valid @RequestBody DurationOfReservableTimeWindowsBaseDto durationOfReservableTimeWindowsBaseDto) {
-        return ResponseEntity.ok(administrationService.createDurationOfReservableTimeWindows(durationOfReservableTimeWindowsBaseDto));
+    @PostMapping("/service-definitions")
+    public ResponseEntity<List<ServiceDefinitionDto>> createServiceDefinitions(@Valid @RequestBody ServiceDefinitionBaseDto serviceDefinitionBaseDto) {
+        return ResponseEntity.ok(administrationService.createServiceDefinitions(serviceDefinitionBaseDto));
     }
 
-    @DeleteMapping("/duration-of-reservable-time-windows")
-    public ResponseEntity<List<DurationOfReservableTimeWindowsDto>> deleteDurationOfReservableTimeWindows(@RequestParam Long id) {
-        return ResponseEntity.ok(administrationService.deleteDurationOfReservableTimeWindows(id));
+    @DeleteMapping("/service-definitions")
+    public ResponseEntity<List<ServiceDefinitionDto>> deleteServiceDefinitions(@RequestParam Long id) {
+        return ResponseEntity.ok(administrationService.deleteServiceDefinitions(id));
     }
 
 }

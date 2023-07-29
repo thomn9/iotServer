@@ -1,8 +1,8 @@
 package cz.reservation.app.service;
 
 import cz.reservation.app.model.dto.BusinessHoursDto;
-import cz.reservation.app.model.dto.DurationOfReservableTimeWindowsBaseDto;
-import cz.reservation.app.model.dto.DurationOfReservableTimeWindowsDto;
+import cz.reservation.app.model.dto.ServiceDefinitionBaseDto;
+import cz.reservation.app.model.dto.ServiceDefinitionDto;
 
 import java.util.List;
 
@@ -12,9 +12,9 @@ public interface AdministrationService {
 
     List<BusinessHoursDto> setBusinessHours(List<BusinessHoursDto> businessHoursDtos);
 
-    List<DurationOfReservableTimeWindowsDto> getDurationsOfReservableTimeWindows();
+    List<ServiceDefinitionDto> getServiceDefinitions();
 
-    List<DurationOfReservableTimeWindowsDto> createDurationOfReservableTimeWindows(DurationOfReservableTimeWindowsBaseDto durationOfReservableTimeWindowsBaseDto);
+    List<ServiceDefinitionDto> createServiceDefinitions(ServiceDefinitionBaseDto serviceDefinitionBaseDto);
 
-    List<DurationOfReservableTimeWindowsDto> deleteDurationOfReservableTimeWindows(Long id);
+    List<ServiceDefinitionDto> deleteServiceDefinitions(Long id);
 }
