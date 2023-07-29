@@ -13,8 +13,6 @@ public class RangeOfLocalTimeSerializer extends JsonSerializer<Range<LocalTime>>
     @Override
     public void serialize(Range<LocalTime> localTimeRange, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
         String[] localTimeRangeAsStringArray ={localTimeRange.getMinimum().toString(), localTimeRange.getMaximum().toString()};
-        jsonGenerator.writeStartArray();
         jsonGenerator.writeArray(localTimeRangeAsStringArray,0,2);
-        jsonGenerator.writeEndArray();
     }
 }
