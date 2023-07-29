@@ -13,5 +13,4 @@ public class ReservableScheduleDto extends ReservableScheduleBaseDto implements 
     @NotNull
     private Long id;
 
-    private Long reservationId;
 }
