@@ -1,34 +1,26 @@
 package cz.reservation.app.service;
 
-import cz.reservation.app.model.RangeOfLocalTimeFactory;
+import cz.reservation.app.ErrorCode;
 import cz.reservation.app.model.ReservableState;
-import cz.reservation.app.model.dto.*;
+import cz.reservation.app.model.dto.ReservableScheduleBaseDto;
+import cz.reservation.app.model.dto.ReservationBaseDto;
+import cz.reservation.app.model.dto.ReservationDetailDto;
 import cz.reservation.app.model.entity.ReservableSchedule;
 import cz.reservation.app.model.entity.Reservation;
 import cz.reservation.app.repository.JpaReservableScheduleRepository;
-import cz.reservation.app.repository.JpaServiceDefinitionRepository;
 import cz.reservation.app.repository.JpaReservationRepository;
-import org.apache.commons.lang3.Range;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.*;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
-
-    @Autowired
-    private AdministrationService administrationService;
-
-    @Autowired
-    private JpaServiceDefinitionRepository serviceDefinitionRepository;
 
     @Autowired
     private JpaReservationRepository reservationRepository;
@@ -39,87 +31,87 @@ public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private ConversionService conversionService;
 
-    @Override
-    public void createReservableSchedule(Long serviceDefinitionId) {
-        LocalDate today = LocalDate.now();
-
-        List<LocalDate> reservableDatesSchedule = today.datesUntil(today.plusDays(30)).collect(Collectors.toList());
-
-        List<BusinessHoursDto> businessHoursDtos = administrationService.getBusinessHours();
-
-        Duration duration = serviceDefinitionRepository
-                .findById(serviceDefinitionId)
-                .get().getDuration();
-
-        List<ReservableScheduleBaseDto> reservableScheduleBaseDtoList = new ArrayList<>();
-
-        reservableDatesSchedule.forEach(date -> {
-
-            List<BusinessHoursDto> applicableBusinessHoursDtos = businessHoursDtos
-                    .stream()
-                    .filter(businessHoursDto -> businessHoursDto.getDayOfWeek().equals(DayOfWeek.from(date)))
-                    .collect(Collectors.toList());
-
-            List<Range<LocalTime>> reservableScheduleForDayOfWeek = createReservableScheduleForDayOfWeek(duration, applicableBusinessHoursDtos);
-
-            reservableScheduleForDayOfWeek.forEach(timeRange -> {
-                reservableScheduleBaseDtoList.add(ReservableScheduleBaseDto.builder()
-                        .reservationDate(date)
-                        .reservableState(ReservableState.AVAILABLE)
-                        .reservableTimeWindow(timeRange)
-                        .serviceDefinitionId(serviceDefinitionId)
-                        .build());
-            });
-        });
-
-
-
-        reservableScheduleRepository.saveAll(
-                reservableScheduleBaseDtoList.stream()
-                        .map(reservableScheduleBaseDto -> conversionService.convert(reservableScheduleBaseDto, ReservableSchedule.class))
-                        .collect(Collectors.toList())
-                );
-    }
-
-   private List<Range<LocalTime>> createReservableScheduleForDayOfWeek(Duration duration, List<BusinessHoursDto> applicableBusinessHoursDtos) {
-
-        List<Range<LocalTime>> reservableTimeWindowsForDayOfWeek = new ArrayList<>();
-
-        applicableBusinessHoursDtos.forEach(applicableBusinessHoursDto -> {
-            Range<LocalTime> businessHoursTimeRange = applicableBusinessHoursDto.getBusinessHoursTimeRange();
-            LocalTime openingTime = applicableBusinessHoursDto.getBusinessHoursTimeRange().getMinimum();
-            Range<LocalTime> reservableTimeWindow = RangeOfLocalTimeFactory.getNewRangeOfLocalTime(openingTime,openingTime.plus(duration.toMinutes(), ChronoUnit.MINUTES));
-
-            while (businessHoursTimeRange.containsRange(reservableTimeWindow)) {
-                reservableTimeWindowsForDayOfWeek.add(reservableTimeWindow);
-                LocalTime nextStartTimeOfReservableTimeWindow = reservableTimeWindow.getMaximum();
-                reservableTimeWindow = RangeOfLocalTimeFactory.getNewRangeOfLocalTime(nextStartTimeOfReservableTimeWindow,nextStartTimeOfReservableTimeWindow.plus(duration.toMinutes(), ChronoUnit.MINUTES));
-            }
-        });
-
-        return reservableTimeWindowsForDayOfWeek;
-    }
-
     @Transactional
     @Override
-    public ReservationDetailDto createReservation(ReservationBaseDto reservationBaseDto) {
-        //todo
+    public List<ReservableScheduleBaseDto> createReservation(ReservationBaseDto reservationBaseDto) throws Exception {
+        Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findById(reservationBaseDto.getReservableScheduleId());
+
+        if (foundReservableSchedule.isEmpty()) {
+            throw new Exception(ErrorCode.RESERVABLE_SCHEDULE_NOT_FOUND.getKey());
+        }
+
+        ReservableSchedule targetReservableSchedule = foundReservableSchedule.get();
+
+        if (!targetReservableSchedule.getReservableState().equals(ReservableState.AVAILABLE)) {
+            throw new Exception(ErrorCode.RESERVABLE_SCHEDULE_NOT_AVAILABLE.getKey());
+        }
+
         Reservation reservation = conversionService.convert(reservationBaseDto, Reservation.class);
         reservation.setReservationCode(UUID.randomUUID().toString());
-        return conversionService.convert(reservationRepository.save(reservation),ReservationDetailDto.class);
+        Reservation createdReservation = reservationRepository.saveAndFlush(reservation);
+        targetReservableSchedule.setReservation(createdReservation);
+        targetReservableSchedule.setReservableState(ReservableState.UNAVAILABLE);
+        reservableScheduleRepository.save(targetReservableSchedule);
+        return reservableScheduleRepository.findAll()
+                .stream()
+                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleBaseDto.class))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public ReservationDetailDto getReservationDetail(String reservationCode) {
-        //todo
-        return conversionService.convert(reservationRepository.getByReservationCode(reservationCode),ReservationDetailDto.class);
+    public List<ReservableScheduleBaseDto> lockReservableSchedule(Long reservableScheduleId) throws Exception {
+        Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findById(reservableScheduleId);
+
+        if (foundReservableSchedule.isEmpty()) {
+            throw new Exception(ErrorCode.RESERVABLE_SCHEDULE_NOT_FOUND.getKey());
+        }
+
+        ReservableSchedule targetReservableSchedule = foundReservableSchedule.get();
+
+        if (!targetReservableSchedule.getReservableState().equals(ReservableState.AVAILABLE)) {
+            throw new Exception(ErrorCode.RESERVABLE_SCHEDULE_NOT_AVAILABLE.getKey());
+        }
+        targetReservableSchedule.setReservableState(ReservableState.LOCKED);
+        reservableScheduleRepository.save(targetReservableSchedule);
+
+        return reservableScheduleRepository.findAll()
+                .stream()
+                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleBaseDto.class))
+                .collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public void deleteReservation(String reservationCode) {
-        //todo
+    public List<ReservableScheduleBaseDto> deleteReservation(String reservationCode) throws Exception {
+        Optional<Reservation> foundReservation = reservationRepository.findByReservationCode(reservationCode);
+        if (foundReservation.isEmpty()) {
+            throw new Exception(ErrorCode.RESERVATION_NOT_FOUND.getKey());
+        }
+
+        Reservation targetReservation = foundReservation.get();
+
+        ReservableSchedule targetReservableSchedule = reservableScheduleRepository.findByReservation(targetReservation.getId());
+        targetReservableSchedule.setReservableState(ReservableState.AVAILABLE);
+        targetReservableSchedule.setReservation(null);
+        reservableScheduleRepository.save(targetReservableSchedule);
         reservationRepository.deleteByReservationCode(reservationCode);
+
+        return reservableScheduleRepository.findAll()
+                .stream()
+                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleBaseDto.class))
+                .collect(Collectors.toList());
     }
+
+    @Override
+    public ReservationDetailDto getReservationDetail(String reservationCode) throws Exception {
+        Optional<Reservation> foundReservation = reservationRepository.findByReservationCode(reservationCode);
+        if (foundReservation.isEmpty()) {
+            throw new Exception(ErrorCode.RESERVATION_NOT_FOUND.getKey());
+        }
+        Reservation targetReservation = foundReservation.get();
+        return conversionService.convert(targetReservation,ReservationDetailDto.class);
+    }
+
+
 
 }

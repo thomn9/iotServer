@@ -1,20 +1,16 @@
 package cz.reservation.app.controller;
 
-import cz.reservation.app.service.ReservableScheduleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
 @Controller
-public class WebController {
+public class WebControllerBackup {
+/*
+    private final MeteorologicalDataService meteorologicalDataService;
 
-    private final ReservableScheduleService reservableScheduleService;
-
-    public WebController(ReservableScheduleService reservableScheduleService) {
-        this.reservableScheduleService = reservableScheduleService;
+    public WebController(MeteorologicalDataService meteorologicalDataService) {
+        this.meteorologicalDataService = meteorologicalDataService;
     }
 
 
@@ -45,16 +41,16 @@ public class WebController {
         String urlPaginationParams = String.format("?pageSize=%s&pageNumber=%d", pageSize, pageNumber);
 
         ModelAndView model = new ModelAndView("home");
-        //model.addObject("meteorologicaldata", new MeteorologicalData());
-        model.addObject("reservableSchedule", this.reservableScheduleService.getReservableSchedule());
+        model.addObject("meteorologicaldata", new MeteorologicalData());
+        model.addObject("meteorologicaldatarecords", this.meteorologicalDataService.getMeteorologicalData(pageSize,pageNumber));
         return model;
     }
 
-    /*@PostMapping("/submit-form")
+    @PostMapping("/submit-form")
     public ModelAndView submitForm(@ModelAttribute MeteorologicalData meteorologicalData){
         ModelAndView model = new ModelAndView("redirect:");
         this.meteorologicalDataService.saveMeteorologicalData(meteorologicalData);
         return model;
-    }*/
-
+    }
+*/
 }

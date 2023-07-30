@@ -1,8 +1,10 @@
 package cz.reservation.app.controller;
 
+import cz.reservation.app.ErrorCode;
+import cz.reservation.app.model.WsRequest;
 import cz.reservation.app.model.dto.ReservableScheduleBaseDto;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import cz.reservation.app.service.ReservationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -10,21 +12,24 @@ import java.util.List;
 @Controller
 public class ReservableScheduleWebSocketController {
 
-    @MessageMapping("/lock")
+    @Autowired
+    private ReservationService reservationService;
+
+    @MessageMapping("/reservation")
     @SendTo("/topic/reservable-schedule")
-    public List<ReservableScheduleBaseDto> lock(Long reservableScheduleId) throws Exception {
-        return new OutputMessage(message.getFrom(), message.getText(), time);
+    public List<ReservableScheduleBaseDto> wsRequestHandle(WsRequest wsRequest) throws Exception {
+
+        switch (wsRequest.getWsAction()) {
+            case LOCK:
+                return reservationService.lockReservableSchedule(wsRequest.getReservableScheduleId());
+            case DELETE:
+                return reservationService.deleteReservation(wsRequest.getReservationCode());
+            case RESERVE:
+                return reservationService.createReservation(wsRequest.getReservationBaseDto());
+            default:
+                throw new Exception(ErrorCode.UNKNOWN_WS_ACTION.getKey());
+        }
+
     }
 
-    @MessageMapping("/reserve")
-    @SendTo("/topic/reservable-schedule")
-    public List<ReservableScheduleBaseDto> reserve(Long reservableScheduleId) throws Exception {
-        return new OutputMessage(message.getFrom(), message.getText(), time);
-    }
-
-    @MessageMapping("/delete-reservation")
-    @SendTo("/topic/reservable-schedule")
-    public List<ReservableScheduleBaseDto> deleteReservation(String reservationCode) throws Exception {
-        return new OutputMessage(message.getFrom(), message.getText(), time);
-    }
 }
