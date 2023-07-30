@@ -4,9 +4,8 @@ function connect() {
     var socket = new SockJS('/reservation');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function(frame) {
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/reservable-schedule', function(messageOutput) {
-            showMessageOutput(JSON.parse(messageOutput));
+        stompClient.subscribe('/topic/reservable-schedule', function(feed) {
+            refreshReservableSchedule(JSON.parse(feed));
         });
     });
 }
@@ -19,12 +18,14 @@ function connect() {
     console.log("Disconnected");
 }*/
 
-function lockReservableSchedule() {
-
+//todo unlock on websocket connection end and secure only one lock per session
+function lockReservableSchedule(id) {
+    const reservableScheduleId = id;
+    document.getElementById('reservableScheduleId').value = id;
     stompClient.send("/app/reservation", {},
         JSON.stringify(
             {'wsAction':"LOCK",
-                'reservableScheduleId':1,
+                'reservableScheduleId':reservableScheduleId,
                 'reservationCode': null,
                 'reservationBaseDto': null
             }));
@@ -51,10 +52,6 @@ function createReservation() {
             }));
 }
 
-function showMessageOutput(messageOutput) {
-    var response = document.getElementById('response');
-    var p = document.createElement('p');
-    p.style = 'break-word';
-    p.appendChild(document.createTextNode(messageOutput));
-    response.appendChild(p);
+function refreshReservableSchedule(feed) {
+
 }

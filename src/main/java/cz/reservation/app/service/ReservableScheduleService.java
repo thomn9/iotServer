@@ -1,6 +1,6 @@
 package cz.reservation.app.service;
 
-import cz.reservation.app.model.dto.ReservableScheduleBaseDto;
+import cz.reservation.app.model.dto.ReservableScheduleDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,6 +9,6 @@ import java.util.List;
 public interface ReservableScheduleService {
     void createReservableSchedule(Long serviceDefinitionId);
 
-    List<ReservableScheduleBaseDto> getReservableSchedule();
+    List<ReservableScheduleDto> getReservableSchedule();
 
 }

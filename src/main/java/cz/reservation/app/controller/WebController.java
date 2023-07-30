@@ -50,11 +50,4 @@ public class WebController {
         return model;
     }
 
-    /*@PostMapping("/submit-form")
-    public ModelAndView submitForm(@ModelAttribute MeteorologicalData meteorologicalData){
-        ModelAndView model = new ModelAndView("redirect:");
-        this.meteorologicalDataService.saveMeteorologicalData(meteorologicalData);
-        return model;
-    }*/
-
 }

@@ -4,6 +4,7 @@ import cz.reservation.app.model.RangeOfLocalTimeFactory;
 import cz.reservation.app.model.ReservableState;
 import cz.reservation.app.model.dto.BusinessHoursDto;
 import cz.reservation.app.model.dto.ReservableScheduleBaseDto;
+import cz.reservation.app.model.dto.ReservableScheduleDto;
 import cz.reservation.app.model.entity.ReservableSchedule;
 import cz.reservation.app.repository.JpaReservableScheduleRepository;
 import cz.reservation.app.repository.JpaServiceDefinitionRepository;
@@ -98,10 +99,10 @@ public class ReservableScheduleServiceImpl implements ReservableScheduleService 
     }
 
     @Override
-    public List<ReservableScheduleBaseDto> getReservableSchedule() {
+    public List<ReservableScheduleDto> getReservableSchedule() {
         return reservableScheduleRepository.findAll()
                 .stream()
-                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleBaseDto.class))
+                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleDto.class))
                 .collect(Collectors.toList());
     }
 
