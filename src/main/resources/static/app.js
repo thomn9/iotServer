@@ -4,8 +4,8 @@ function connect() {
     var socket = new SockJS('/reservation');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function(frame) {
-        stompClient.subscribe('/topic/reservable-schedule', function(feed) {
-            refreshReservableSchedule(JSON.parse(feed));
+        stompClient.subscribe('/topic/reservable-schedule', function(incomingFeed) {
+            refreshReservableSchedule(JSON.parse(incomingFeed.body));
         });
     });
 }
@@ -52,6 +52,9 @@ function createReservation() {
             }));
 }
 
-function refreshReservableSchedule(feed) {
+function refreshReservableSchedule(updatedRecord) {
+    const reservableScheduleId = updatedRecord.id;
+    console.log(document.getElementById(reservableScheduleId).parentElement.parentElement.getElementsByClassName("reservableState")[0])
+    document.getElementById(reservableScheduleId).parentElement.parentElement.getElementsByClassName("reservableState")[0].textContent = updatedRecord.reservableState;
 
 }

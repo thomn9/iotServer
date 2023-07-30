@@ -57,7 +57,7 @@
             <td th:text="${reservableScheduleRecord.getReservationDate()}"></td>
             <td th:text="${reservableScheduleRecord.getReservableTimeWindow().getMinimum()}"></td>
             <td th:text="${reservableScheduleRecord.getReservableTimeWindow().getMaximum()}"></td>
-            <td th:text="${reservableScheduleRecord.getReservableState()}"></td>
+            <td class="reservableState" th:text="${reservableScheduleRecord.getReservableState()}"></td>
             <td th:text="${reservableScheduleRecord.getServiceDefinitionId()}"></td>
             <td><button th:id="${reservableScheduleRecord.getId()}" onclick="lockReservableSchedule(id)" class="btn btn-primary">Vybrat</button></td>
         </tr>

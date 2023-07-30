@@ -9,8 +9,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
-
 @Controller
 public class ReservableScheduleWebSocketController {
 
@@ -19,7 +17,7 @@ public class ReservableScheduleWebSocketController {
 
     @MessageMapping("/reservation")
     @SendTo("/topic/reservable-schedule")
-    public List<ReservableScheduleDto> wsRequestHandle(WsRequest wsRequest) throws Exception {
+    public ReservableScheduleDto wsRequestHandle(WsRequest wsRequest) throws Exception {
 
         switch (wsRequest.getWsAction()) {
             case LOCK:

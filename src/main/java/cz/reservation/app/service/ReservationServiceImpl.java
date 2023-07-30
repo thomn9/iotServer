@@ -2,7 +2,6 @@ package cz.reservation.app.service;
 
 import cz.reservation.app.ErrorCode;
 import cz.reservation.app.model.ReservableState;
-import cz.reservation.app.model.dto.ReservableScheduleBaseDto;
 import cz.reservation.app.model.dto.ReservableScheduleDto;
 import cz.reservation.app.model.dto.ReservationBaseDto;
 import cz.reservation.app.model.dto.ReservationDetailDto;
@@ -15,10 +14,8 @@ import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class ReservationServiceImpl implements ReservationService {
@@ -34,7 +31,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional
     @Override
-    public List<ReservableScheduleDto> createReservation(ReservationBaseDto reservationBaseDto) throws Exception {
+    public ReservableScheduleDto createReservation(ReservationBaseDto reservationBaseDto) throws Exception {
         Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findById(reservationBaseDto.getReservableScheduleId());
 
         if (foundReservableSchedule.isEmpty()) {
@@ -53,14 +50,11 @@ public class ReservationServiceImpl implements ReservationService {
         targetReservableSchedule.setReservation(createdReservation);
         targetReservableSchedule.setReservableState(ReservableState.UNAVAILABLE);
         reservableScheduleRepository.save(targetReservableSchedule);
-        return reservableScheduleRepository.findAll()
-                .stream()
-                .map(reservableSchedule -> conversionService.convert(reservableSchedule, ReservableScheduleDto.class))
-                .collect(Collectors.toList());
+        return conversionService.convert(reservableScheduleRepository.save(targetReservableSchedule), ReservableScheduleDto.class);
     }
 
     @Override
-    public List<ReservableScheduleDto> lockReservableSchedule(Long reservableScheduleId) throws Exception {
+    public ReservableScheduleDto lockReservableSchedule(Long reservableScheduleId) throws Exception {
         Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findById(reservableScheduleId);
 
         if (foundReservableSchedule.isEmpty()) {
@@ -75,15 +69,12 @@ public class ReservationServiceImpl implements ReservationService {
         targetReservableSchedule.setReservableState(ReservableState.LOCKED);
         reservableScheduleRepository.save(targetReservableSchedule);
 
-        return reservableScheduleRepository.findAll()
-                .stream()
-                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleDto.class))
-                .collect(Collectors.toList());
+        return conversionService.convert(reservableScheduleRepository.save(targetReservableSchedule), ReservableScheduleDto.class);
     }
 
     @Transactional
     @Override
-    public List<ReservableScheduleDto> deleteReservation(String reservationCode) throws Exception {
+    public ReservableScheduleDto deleteReservation(String reservationCode) throws Exception {
         Optional<Reservation> foundReservation = reservationRepository.findByReservationCode(reservationCode);
         if (foundReservation.isEmpty()) {
             throw new Exception(ErrorCode.RESERVATION_NOT_FOUND.getKey());
@@ -94,13 +85,10 @@ public class ReservationServiceImpl implements ReservationService {
         ReservableSchedule targetReservableSchedule = reservableScheduleRepository.findByReservation(targetReservation.getId());
         targetReservableSchedule.setReservableState(ReservableState.AVAILABLE);
         targetReservableSchedule.setReservation(null);
-        reservableScheduleRepository.save(targetReservableSchedule);
+        ReservableSchedule reservableScheduleAfterUpdate = reservableScheduleRepository.save(targetReservableSchedule);
         reservationRepository.deleteByReservationCode(reservationCode);
 
-        return reservableScheduleRepository.findAll()
-                .stream()
-                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleDto.class))
-                .collect(Collectors.toList());
+        return conversionService.convert(reservableScheduleAfterUpdate, ReservableScheduleDto.class);
     }
 
     @Override
