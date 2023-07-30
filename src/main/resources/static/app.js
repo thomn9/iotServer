@@ -20,6 +20,7 @@ function connect() {
 }*/
 
 function lockReservableSchedule() {
+
     stompClient.send("/app/reservation", {},
         JSON.stringify(
             {'wsAction':"LOCK",
@@ -29,12 +30,26 @@ function lockReservableSchedule() {
             }));
 }
 
-/*function sendMessage() {
-    var from = document.getElementById('from').value;
-    var text = document.getElementById('text').value;
+function createReservation() {
+    const reservableScheduleId = document.getElementById('reservableScheduleId').value;
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+    const phoneNumber = document.getElementById('phoneNumber').value;
     stompClient.send("/app/reservation", {},
-        JSON.stringify({'from':from, 'text':text}));
-}*/
+        JSON.stringify(
+            {'wsAction':"RESERVE",
+                'reservableScheduleId':null,
+                'reservationCode': null,
+                'reservationBaseDto': {
+                    'reservableScheduleId': reservableScheduleId,
+                    'firstName': firstName,
+                    'lastName': lastName,
+                    'email': email,
+                    'phoneNumber': phoneNumber
+                }
+            }));
+}
 
 function showMessageOutput(messageOutput) {
     var response = document.getElementById('response');
