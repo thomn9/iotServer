@@ -2,7 +2,7 @@ package cz.reservation.app.controller;
 
 import cz.reservation.app.ErrorCode;
 import cz.reservation.app.model.WsRequest;
-import cz.reservation.app.model.dto.ReservableScheduleBaseDto;
+import cz.reservation.app.model.dto.ReservableScheduleDto;
 import cz.reservation.app.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -19,7 +19,7 @@ public class ReservableScheduleWebSocketController {
 
     @MessageMapping("/reservation")
     @SendTo("/topic/reservable-schedule")
-    public List<ReservableScheduleBaseDto> wsRequestHandle(WsRequest wsRequest) throws Exception {
+    public List<ReservableScheduleDto> wsRequestHandle(WsRequest wsRequest) throws Exception {
 
         switch (wsRequest.getWsAction()) {
             case LOCK:

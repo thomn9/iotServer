@@ -3,6 +3,7 @@ package cz.reservation.app.service;
 import cz.reservation.app.ErrorCode;
 import cz.reservation.app.model.ReservableState;
 import cz.reservation.app.model.dto.ReservableScheduleBaseDto;
+import cz.reservation.app.model.dto.ReservableScheduleDto;
 import cz.reservation.app.model.dto.ReservationBaseDto;
 import cz.reservation.app.model.dto.ReservationDetailDto;
 import cz.reservation.app.model.entity.ReservableSchedule;
@@ -33,7 +34,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional
     @Override
-    public List<ReservableScheduleBaseDto> createReservation(ReservationBaseDto reservationBaseDto) throws Exception {
+    public List<ReservableScheduleDto> createReservation(ReservationBaseDto reservationBaseDto) throws Exception {
         Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findById(reservationBaseDto.getReservableScheduleId());
 
         if (foundReservableSchedule.isEmpty()) {
@@ -54,12 +55,12 @@ public class ReservationServiceImpl implements ReservationService {
         reservableScheduleRepository.save(targetReservableSchedule);
         return reservableScheduleRepository.findAll()
                 .stream()
-                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleBaseDto.class))
+                .map(reservableSchedule -> conversionService.convert(reservableSchedule, ReservableScheduleDto.class))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<ReservableScheduleBaseDto> lockReservableSchedule(Long reservableScheduleId) throws Exception {
+    public List<ReservableScheduleDto> lockReservableSchedule(Long reservableScheduleId) throws Exception {
         Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findById(reservableScheduleId);
 
         if (foundReservableSchedule.isEmpty()) {
@@ -76,13 +77,13 @@ public class ReservationServiceImpl implements ReservationService {
 
         return reservableScheduleRepository.findAll()
                 .stream()
-                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleBaseDto.class))
+                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleDto.class))
                 .collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public List<ReservableScheduleBaseDto> deleteReservation(String reservationCode) throws Exception {
+    public List<ReservableScheduleDto> deleteReservation(String reservationCode) throws Exception {
         Optional<Reservation> foundReservation = reservationRepository.findByReservationCode(reservationCode);
         if (foundReservation.isEmpty()) {
             throw new Exception(ErrorCode.RESERVATION_NOT_FOUND.getKey());
@@ -98,7 +99,7 @@ public class ReservationServiceImpl implements ReservationService {
 
         return reservableScheduleRepository.findAll()
                 .stream()
-                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleBaseDto.class))
+                .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleDto.class))
                 .collect(Collectors.toList());
     }
 
