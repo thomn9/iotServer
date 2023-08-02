@@ -1,7 +1,6 @@
 spring:
-  liquibase:
-    enabled: true
-    change-log: liquibase/db.changelog-master.yaml
+  session:
+    store-type: jdbc
   datasource:
     url: jdbc:h2:mem:testdb;MODE=LEGACY
     driver-class-name: org.h2.Driver
@@ -12,3 +11,6 @@ spring:
   h2:
     console:
       enabled: true
+  liquibase:
+    enabled: true
+    change-log: liquibase/db.changelog-master.yaml

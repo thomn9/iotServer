@@ -7,6 +7,9 @@ import cz.reservation.app.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.session.Session;
+import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
+import org.springframework.session.web.socket.server.SessionRepositoryMessageInterceptor;
 import org.springframework.stereotype.Controller;
 
 @Controller
