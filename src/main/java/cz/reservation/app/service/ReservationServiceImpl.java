@@ -40,16 +40,18 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional
     @Override
-    public ReservableScheduleDto createReservation(ReservationBaseDto reservationBaseDto) throws Exception {
+    public ReservationDetailDto createReservation(ReservationBaseDto reservationBaseDto) throws Exception {
         Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findById(reservationBaseDto.getReservableScheduleId());
 
         if (foundReservableSchedule.isEmpty()) {
             throw new Exception(ErrorCode.RESERVABLE_SCHEDULE_NOT_FOUND.getKey());
         }
-
         ReservableSchedule targetReservableSchedule = foundReservableSchedule.get();
 
-        if (!targetReservableSchedule.getReservableState().equals(ReservableState.AVAILABLE)) {
+        UUID sessionId = UUID.fromString(RequestContextHolder.getRequestAttributes().getSessionId());
+
+        if (!targetReservableSchedule.getReservableState().equals(ReservableState.LOCKED) &&
+                !targetReservableSchedule.getSessionId().equals(sessionId)) {
             throw new Exception(ErrorCode.RESERVABLE_SCHEDULE_NOT_AVAILABLE.getKey());
         }
 
@@ -58,8 +60,12 @@ public class ReservationServiceImpl implements ReservationService {
         Reservation createdReservation = reservationRepository.saveAndFlush(reservation);
         targetReservableSchedule.setReservation(createdReservation);
         targetReservableSchedule.setReservableState(ReservableState.UNAVAILABLE);
+        targetReservableSchedule.setSessionId(null);
         reservableScheduleRepository.save(targetReservableSchedule);
-        return conversionService.convert(reservableScheduleRepository.save(targetReservableSchedule), ReservableScheduleDto.class);
+        applicationEventPublisher.publishEvent(ReservableScheduleEvent.builder().reservableScheduleUpdateEventDtoList(
+                List.of(ReservableScheduleUpdateEventDto.builder().id(targetReservableSchedule.getId()).newReservableState(targetReservableSchedule.getReservableState()).build())
+        ).build());
+        return conversionService.convert(createdReservation, ReservationDetailDto.class);
     }
 
     @Transactional
@@ -106,7 +112,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Transactional
     @Override
-    public ReservableScheduleDto deleteReservation(String reservationCode) throws Exception {
+    public void deleteReservation(String reservationCode) throws Exception {
         Optional<Reservation> foundReservation = reservationRepository.findByReservationCode(reservationCode);
         if (foundReservation.isEmpty()) {
             throw new Exception(ErrorCode.RESERVATION_NOT_FOUND.getKey());
@@ -117,10 +123,11 @@ public class ReservationServiceImpl implements ReservationService {
         ReservableSchedule targetReservableSchedule = reservableScheduleRepository.findByReservation(targetReservation.getId());
         targetReservableSchedule.setReservableState(ReservableState.AVAILABLE);
         targetReservableSchedule.setReservation(null);
-        ReservableSchedule reservableScheduleAfterUpdate = reservableScheduleRepository.save(targetReservableSchedule);
+        reservableScheduleRepository.save(targetReservableSchedule);
         reservationRepository.deleteByReservationCode(reservationCode);
-
-        return conversionService.convert(reservableScheduleAfterUpdate, ReservableScheduleDto.class);
+        applicationEventPublisher.publishEvent(ReservableScheduleEvent.builder().reservableScheduleUpdateEventDtoList(
+                List.of(ReservableScheduleUpdateEventDto.builder().id(targetReservableSchedule.getId()).newReservableState(targetReservableSchedule.getReservableState()).build())
+        ).build());
     }
 
     @Override

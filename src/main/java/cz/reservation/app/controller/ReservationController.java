@@ -1,7 +1,7 @@
 package cz.reservation.app.controller;
 
+import cz.reservation.app.model.dto.ReservationBaseDto;
 import cz.reservation.app.model.dto.ReservationDetailDto;
-import cz.reservation.app.service.WSNotificationService;
 import cz.reservation.app.service.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +14,6 @@ public class ReservationController {
     @Autowired
     private ReservationService reservationService;
 
-    @Autowired
-    private WSNotificationService wsNotificationService;
     @GetMapping("/detail")
     public ResponseEntity<ReservationDetailDto> getReservationDetail(@RequestParam String reservationCode) throws Exception {
         return ResponseEntity.ok(reservationService.getReservationDetail(reservationCode));
@@ -27,9 +25,16 @@ public class ReservationController {
         return ResponseEntity.ok().build();
     }
 
-   //@PostMapping("/reserve")
+    @PostMapping("/reserve")
+    public ResponseEntity<ReservationDetailDto> createReservation(@RequestBody ReservationBaseDto reservationBaseDto) throws Exception {
+        return ResponseEntity.ok(reservationService.createReservation(reservationBaseDto));
+    }
 
-    //@DeleteMapping("/delete")
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteReservation(@RequestParam String reservationCode) throws Exception {
+        reservationService.deleteReservation(reservationCode);
+        return ResponseEntity.ok().build();
+    }
 
 
 }

@@ -19,11 +19,10 @@ function connect() {
     console.log("Disconnected");
 }*/
 
-//todo unlock on websocket connection end and secure only one lock per session
 function lockReservableSchedule(id) {
     const reservableScheduleId = id;
     document.getElementById('reservableScheduleId').value = id;
-    xhttp.open("POST",`/reservation/lock?reservableScheduleId=${id}`, true)
+    xhttp.open('POST',`/reservation/lock?reservableScheduleId=${id}`, true)
     xhttp.send()
     /*stompClient.send("/app/reservation", {},
         JSON.stringify(
@@ -40,7 +39,21 @@ function createReservation() {
     const lastName = document.getElementById('lastName').value;
     const email = document.getElementById('email').value;
     const phoneNumber = document.getElementById('phoneNumber').value;
-    stompClient.send("/app/reservation", {},
+
+    xhttp.open('POST','/reservation/reserve', true)
+    xhttp.setRequestHeader("Content-Type","application/json")
+    xhttp.send(
+            JSON.stringify({
+                    'reservableScheduleId': reservableScheduleId,
+                    'firstName': firstName,
+                    'lastName': lastName,
+                    'email': email,
+                    'phoneNumber': phoneNumber
+            })
+    )
+
+
+    /*stompClient.send("/app/reservation", {},
         JSON.stringify(
             {'wsAction':"RESERVE",
                 'reservableScheduleId':null,
@@ -52,7 +65,7 @@ function createReservation() {
                     'email': email,
                     'phoneNumber': phoneNumber
                 }
-            }));
+            }));*/
 }
 
 function refreshReservableSchedule(event) {

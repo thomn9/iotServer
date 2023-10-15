@@ -10,8 +10,8 @@ public interface ReservationService {
 
     ReservableScheduleDto lockReservableSchedule(Long reservableScheduleId) throws Exception;
 
-    ReservableScheduleDto createReservation(ReservationBaseDto reservationBaseDto) throws Exception;
+    ReservationDetailDto createReservation(ReservationBaseDto reservationBaseDto) throws Exception;
 
-    ReservableScheduleDto deleteReservation(String reservationCode) throws Exception;
+    void deleteReservation(String reservationCode) throws Exception;
 
 }
