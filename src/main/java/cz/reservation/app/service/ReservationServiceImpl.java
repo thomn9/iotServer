@@ -3,17 +3,23 @@ package cz.reservation.app.service;
 import cz.reservation.app.ErrorCode;
 import cz.reservation.app.model.ReservableState;
 import cz.reservation.app.model.dto.ReservableScheduleDto;
+import cz.reservation.app.model.dto.ReservableScheduleUpdateEventDto;
 import cz.reservation.app.model.dto.ReservationBaseDto;
 import cz.reservation.app.model.dto.ReservationDetailDto;
 import cz.reservation.app.model.entity.ReservableSchedule;
 import cz.reservation.app.model.entity.Reservation;
+import cz.reservation.app.model.event.ReservableScheduleEvent;
 import cz.reservation.app.repository.JpaReservableScheduleRepository;
 import cz.reservation.app.repository.JpaReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,6 +34,9 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Autowired
     private ConversionService conversionService;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     @Override
@@ -67,19 +76,31 @@ public class ReservationServiceImpl implements ReservationService {
             throw new Exception(ErrorCode.RESERVABLE_SCHEDULE_NOT_AVAILABLE.getKey());
         }
 
+        List<ReservableScheduleUpdateEventDto> reservableScheduleUpdateEventDtoList = new ArrayList<>();
+
         UUID sessionId = UUID.fromString(RequestContextHolder.getRequestAttributes().getSessionId());
         Optional<ReservableSchedule> foundAlreadyLockedReservableSchedule = reservableScheduleRepository.findBySessionId(sessionId);
         if(foundAlreadyLockedReservableSchedule.isPresent()){
             ReservableSchedule alreadyLockedReservableSchedule = foundAlreadyLockedReservableSchedule.get();
             alreadyLockedReservableSchedule.setReservableState(ReservableState.AVAILABLE);
             alreadyLockedReservableSchedule.setSessionId(null);
+            reservableScheduleUpdateEventDtoList
+                    .add(ReservableScheduleUpdateEventDto.builder()
+                            .id(alreadyLockedReservableSchedule.getId())
+                            .newReservableState(alreadyLockedReservableSchedule.getReservableState())
+                            .build());
             reservableScheduleRepository.saveAndFlush(alreadyLockedReservableSchedule);
         }
 
         targetReservableSchedule.setReservableState(ReservableState.LOCKED);
         targetReservableSchedule.setSessionId(sessionId);
+        reservableScheduleUpdateEventDtoList
+                .add(ReservableScheduleUpdateEventDto.builder()
+                        .id(targetReservableSchedule.getId())
+                        .newReservableState(targetReservableSchedule.getReservableState())
+                        .build());
         reservableScheduleRepository.save(targetReservableSchedule);
-
+        applicationEventPublisher.publishEvent(ReservableScheduleEvent.builder().reservableScheduleUpdateEventDtoList(reservableScheduleUpdateEventDtoList).build());
         return conversionService.convert(reservableScheduleRepository.save(targetReservableSchedule), ReservableScheduleDto.class);
     }
 

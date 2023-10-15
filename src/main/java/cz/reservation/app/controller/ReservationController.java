@@ -23,7 +23,7 @@ public class ReservationController {
 
     @PostMapping("/lock")
     public ResponseEntity<Void> lockReservation(@RequestParam Long reservableScheduleId) throws Exception {
-        wsNotificationService.notify(reservationService.lockReservableSchedule(reservableScheduleId));
+        reservationService.lockReservableSchedule(reservableScheduleId);
         return ResponseEntity.ok().build();
     }
 
