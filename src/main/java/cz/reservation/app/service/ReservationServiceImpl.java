@@ -38,6 +38,9 @@ public class ReservationServiceImpl implements ReservationService {
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
+    @Autowired
+    UnlockTimerService unlockTimerService;
+
     @Transactional
     @Override
     public ReservationDetailDto createReservation(ReservationBaseDto reservationBaseDto) throws Exception {
@@ -107,6 +110,7 @@ public class ReservationServiceImpl implements ReservationService {
                         .build());
         reservableScheduleRepository.save(targetReservableSchedule);
         applicationEventPublisher.publishEvent(ReservableScheduleEvent.builder().reservableScheduleUpdateEventDtoList(reservableScheduleUpdateEventDtoList).build());
+        unlockTimerService.scheduleUnlockTimer(sessionId);
         return conversionService.convert(reservableScheduleRepository.save(targetReservableSchedule), ReservableScheduleDto.class);
     }
 
@@ -128,6 +132,7 @@ public class ReservationServiceImpl implements ReservationService {
         applicationEventPublisher.publishEvent(ReservableScheduleEvent.builder().reservableScheduleUpdateEventDtoList(
                 List.of(ReservableScheduleUpdateEventDto.builder().id(targetReservableSchedule.getId()).newReservableState(targetReservableSchedule.getReservableState()).build())
         ).build());
+
     }
 
     @Override
