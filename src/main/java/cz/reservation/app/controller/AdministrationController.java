@@ -14,6 +14,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
+@RequestMapping("admin")
 public class AdministrationController {
     //todo validation error propagation to API
     @Autowired

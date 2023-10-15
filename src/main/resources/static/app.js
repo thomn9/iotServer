@@ -1,13 +1,14 @@
 let stompClient = null;
 
 function connect() {
-    var socket = new SockJS('/reservation');
+    var socket = new SockJS('/notification');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function(frame) {
         stompClient.subscribe('/topic/reservable-schedule', function(incomingFeed) {
             refreshReservableSchedule(JSON.parse(incomingFeed.body));
         });
     });
+    xhttp = new XMLHttpRequest();
 }
 
 /*function disconnect() {
@@ -22,13 +23,15 @@ function connect() {
 function lockReservableSchedule(id) {
     const reservableScheduleId = id;
     document.getElementById('reservableScheduleId').value = id;
-    stompClient.send("/app/reservation", {},
+    xhttp.open("POST",`/reservation/lock?reservableScheduleId=${id}`, true)
+    xhttp.send()
+    /*stompClient.send("/app/reservation", {},
         JSON.stringify(
             {'wsAction':"LOCK",
                 'reservableScheduleId':reservableScheduleId,
                 'reservationCode': null,
                 'reservationBaseDto': null
-            }));
+            }));*/
 }
 
 function createReservation() {

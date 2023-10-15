@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -32,6 +33,9 @@ public class ReservableSchedule {
     @Column(name = "reservable_state")
     @Enumerated(EnumType.STRING)
     private ReservableState reservableState;
+
+    @Column(name = "session_id")
+    private UUID sessionId;
 
     @ManyToOne
     @JoinColumn(name="service_definition_id", nullable=false)

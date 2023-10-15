@@ -122,6 +122,11 @@ databaseChangeLog:
                   name: reservable_state
                   type: VARCHAR
               - column:
+                  name: session_id
+                  type: uuid
+                  constraints:
+                    unique: true
+              - column:
                   name: service_definition_id
                   type: BIGINT
                   constraints:

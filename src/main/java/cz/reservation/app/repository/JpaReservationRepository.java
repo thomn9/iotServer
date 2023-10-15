@@ -11,4 +11,5 @@ public interface JpaReservationRepository extends JpaRepository<Reservation, Lon
 
     Optional<Reservation> findByReservationCode(String reservationCode);
 
+
 }

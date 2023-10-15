@@ -20,7 +20,6 @@ public class WebSocketConfig extends AbstractSessionWebSocketMessageBrokerConfig
 
     @Override
     public void configureStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/reservation");
-        registry.addEndpoint("/reservation").withSockJS();
+        registry.addEndpoint("/notification").withSockJS();
     }
 }

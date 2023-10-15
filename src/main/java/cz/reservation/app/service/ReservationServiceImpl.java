@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.springframework.web.context.request.RequestContextHolder;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -53,6 +53,7 @@ public class ReservationServiceImpl implements ReservationService {
         return conversionService.convert(reservableScheduleRepository.save(targetReservableSchedule), ReservableScheduleDto.class);
     }
 
+    @Transactional
     @Override
     public ReservableScheduleDto lockReservableSchedule(Long reservableScheduleId) throws Exception {
         Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findById(reservableScheduleId);
@@ -62,11 +63,21 @@ public class ReservationServiceImpl implements ReservationService {
         }
 
         ReservableSchedule targetReservableSchedule = foundReservableSchedule.get();
-
         if (!targetReservableSchedule.getReservableState().equals(ReservableState.AVAILABLE)) {
             throw new Exception(ErrorCode.RESERVABLE_SCHEDULE_NOT_AVAILABLE.getKey());
         }
+
+        UUID sessionId = UUID.fromString(RequestContextHolder.getRequestAttributes().getSessionId());
+        Optional<ReservableSchedule> foundAlreadyLockedReservableSchedule = reservableScheduleRepository.findBySessionId(sessionId);
+        if(foundAlreadyLockedReservableSchedule.isPresent()){
+            ReservableSchedule alreadyLockedReservableSchedule = foundAlreadyLockedReservableSchedule.get();
+            alreadyLockedReservableSchedule.setReservableState(ReservableState.AVAILABLE);
+            alreadyLockedReservableSchedule.setSessionId(null);
+            reservableScheduleRepository.saveAndFlush(alreadyLockedReservableSchedule);
+        }
+
         targetReservableSchedule.setReservableState(ReservableState.LOCKED);
+        targetReservableSchedule.setSessionId(sessionId);
         reservableScheduleRepository.save(targetReservableSchedule);
 
         return conversionService.convert(reservableScheduleRepository.save(targetReservableSchedule), ReservableScheduleDto.class);
