@@ -55,9 +55,8 @@ function createReservation() {
             }));
 }
 
-function refreshReservableSchedule(updatedRecord) {
-    const reservableScheduleId = updatedRecord.id;
-    console.log(document.getElementById(reservableScheduleId).parentElement.parentElement.getElementsByClassName("reservableState")[0])
-    document.getElementById(reservableScheduleId).parentElement.parentElement.getElementsByClassName("reservableState")[0].textContent = updatedRecord.reservableState;
-
+function refreshReservableSchedule(event) {
+    event.forEach((reservableScheduleUpdateEventDto) => {
+        document.getElementById(reservableScheduleUpdateEventDto.id).parentElement.parentElement.getElementsByClassName("reservableState")[0].textContent = reservableScheduleUpdateEventDto.newReservableState;
+    })
 }
