@@ -10,4 +10,6 @@ public interface JpaReservableScheduleRepository extends JpaRepository<Reservabl
     ReservableSchedule findByReservation(Long reservationId);
 
     Optional<ReservableSchedule> findBySessionId(UUID sessionId);
+
+    Optional<ReservableSchedule> findBySessionIdAndId(UUID sessionId, Long id);
 }

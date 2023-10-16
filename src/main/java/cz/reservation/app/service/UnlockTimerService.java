@@ -7,9 +7,7 @@ import cz.reservation.app.model.event.ReservableScheduleEvent;
 import cz.reservation.app.repository.JpaReservableScheduleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -28,12 +26,15 @@ public class UnlockTimerService {
 
     private long UNLOCK_AFTER = 60000L;
 
-    public void scheduleUnlockTimer(UUID sessionId){
+
+    //todo impl mechanism for canceling timertasks in case or lock change https://stackoverflow.com/questions/29349725/get-instance-of-a-running-timer-in-java
+
+    public void scheduleUnlockTimer(UUID sessionId, Long reservableScheduleId){
         TimerTask task = new TimerTask() {
 
             public void run() {
                 transactionService.executeTransaction(() -> {
-                    Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findBySessionId(sessionId);
+                    Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findBySessionIdAndId(sessionId, reservableScheduleId);
                     if(foundReservableSchedule.isPresent()){
                         ReservableSchedule reservableScheduleToUnlock = foundReservableSchedule.get();
                         reservableScheduleToUnlock.setReservableState(ReservableState.AVAILABLE);

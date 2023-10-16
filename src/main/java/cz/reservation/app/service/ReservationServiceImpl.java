@@ -110,7 +110,7 @@ public class ReservationServiceImpl implements ReservationService {
                         .build());
         reservableScheduleRepository.save(targetReservableSchedule);
         applicationEventPublisher.publishEvent(ReservableScheduleEvent.builder().reservableScheduleUpdateEventDtoList(reservableScheduleUpdateEventDtoList).build());
-        unlockTimerService.scheduleUnlockTimer(sessionId);
+        unlockTimerService.scheduleUnlockTimer(sessionId, targetReservableSchedule.getId());
         return conversionService.convert(reservableScheduleRepository.save(targetReservableSchedule), ReservableScheduleDto.class);
     }
 
