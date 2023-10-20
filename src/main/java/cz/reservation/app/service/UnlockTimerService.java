@@ -24,18 +24,18 @@ public class UnlockTimerService {
     private TransactionService transactionService;
 
 
-    private long UNLOCK_AFTER = 60000L;
+    private long UNLOCK_AFTER = 10000L;
+
+    private Map<UUID, Timer> timers = new HashMap<>();
 
 
-    //todo impl mechanism for canceling timertasks in case or lock change https://stackoverflow.com/questions/29349725/get-instance-of-a-running-timer-in-java
-
-    public void scheduleUnlockTimer(UUID sessionId, Long reservableScheduleId){
+    public void scheduleUnlockTimer(UUID sessionId, Long reservableScheduleId) {
         TimerTask task = new TimerTask() {
 
             public void run() {
                 transactionService.executeTransaction(() -> {
                     Optional<ReservableSchedule> foundReservableSchedule = reservableScheduleRepository.findBySessionIdAndId(sessionId, reservableScheduleId);
-                    if(foundReservableSchedule.isPresent()){
+                    if (foundReservableSchedule.isPresent()) {
                         ReservableSchedule reservableScheduleToUnlock = foundReservableSchedule.get();
                         reservableScheduleToUnlock.setReservableState(ReservableState.AVAILABLE);
                         reservableScheduleToUnlock.setSessionId(null);
@@ -49,6 +49,12 @@ public class UnlockTimerService {
         };
 
         Timer timer = new Timer();
+        timers.put(sessionId,timer);
         timer.schedule(task, UNLOCK_AFTER);
+    }
+
+    public void cancelUnlockTimer(UUID sessionId) {
+        Timer canceledTimer = timers.get(sessionId);
+        canceledTimer.cancel();
     }
 }

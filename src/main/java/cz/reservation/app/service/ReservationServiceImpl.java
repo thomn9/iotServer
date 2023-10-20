@@ -90,6 +90,7 @@ public class ReservationServiceImpl implements ReservationService {
         UUID sessionId = UUID.fromString(RequestContextHolder.getRequestAttributes().getSessionId());
         Optional<ReservableSchedule> foundAlreadyLockedReservableSchedule = reservableScheduleRepository.findBySessionId(sessionId);
         if(foundAlreadyLockedReservableSchedule.isPresent()){
+            unlockTimerService.cancelUnlockTimer(sessionId);
             ReservableSchedule alreadyLockedReservableSchedule = foundAlreadyLockedReservableSchedule.get();
             alreadyLockedReservableSchedule.setReservableState(ReservableState.AVAILABLE);
             alreadyLockedReservableSchedule.setSessionId(null);
