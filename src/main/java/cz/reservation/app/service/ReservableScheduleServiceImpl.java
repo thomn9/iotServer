@@ -99,8 +99,8 @@ public class ReservableScheduleServiceImpl implements ReservableScheduleService 
     }
 
     @Override
-    public List<ReservableScheduleDto> getReservableSchedule() {
-        return reservableScheduleRepository.findAll()
+    public List<ReservableScheduleDto> getReservableSchedule(LocalDate reservationDate, Long serviceDefinitionId) {
+        return reservableScheduleRepository.findByReservationDateAndServiceDefinitionId(reservationDate, serviceDefinitionId)
                 .stream()
                 .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleDto.class))
                 .collect(Collectors.toList());
