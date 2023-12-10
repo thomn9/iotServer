@@ -44,7 +44,7 @@ public class WebController {
 
         String urlPaginationParams = String.format("?pageSize=%s&pageNumber=%d", pageSize, pageNumber);
 
-        ModelAndView model = new ModelAndView("snippets");
+        ModelAndView model = new ModelAndView("home");
         //model.addObject("meteorologicaldata", new MeteorologicalData());
         model.addObject("reservableSchedule", this.reservableScheduleService.getReservableSchedule());
         return model;
