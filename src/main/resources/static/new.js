@@ -100,19 +100,22 @@ function createReservation() {
 
 function refreshReservableSchedule(event) {
     event.forEach((reservableScheduleUpdateEventDto) => {
-        switch (reservableScheduleUpdateEventDto.newReservableState) {
-            case 'LOCKED':
-                if (!document.getElementById(reservableScheduleUpdateEventDto.id).classList.contains('select')) {
-                    document.getElementById(reservableScheduleUpdateEventDto.id).classList.add('locked');
-                }
-                break;
+        const targetReservableSchedule = document.getElementById(reservableScheduleUpdateEventDto.id)
+        if (targetReservableSchedule != null) {
+            switch (reservableScheduleUpdateEventDto.newReservableState) {
+                case 'LOCKED':
+                    if (!document.getElementById(reservableScheduleUpdateEventDto.id).classList.contains('select')) {
+                        document.getElementById(reservableScheduleUpdateEventDto.id).classList.add('locked');
+                    }
+                    break;
 
-            case 'AVAILABLE':
-                document.getElementById(reservableScheduleUpdateEventDto.id).classList.remove('locked');
-                if(document.getElementById(reservableScheduleUpdateEventDto.id).classList.contains('select')) {
-                    document.getElementById(reservableScheduleUpdateEventDto.id).classList.remove('select');
-                }
-                break;
+                case 'AVAILABLE':
+                    document.getElementById(reservableScheduleUpdateEventDto.id).classList.remove('locked');
+                    if(document.getElementById(reservableScheduleUpdateEventDto.id).classList.contains('select')) {
+                        document.getElementById(reservableScheduleUpdateEventDto.id).classList.remove('select');
+                    }
+                    break;
+            }
         }
     })
 }
