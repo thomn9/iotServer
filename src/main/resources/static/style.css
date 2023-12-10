@@ -146,11 +146,13 @@ thead tr:nth-child(3) th {
 .cell.select {
     background-color: #3D5AFE;
     color: #fff;
+    pointer-events: none;
 }
 
 .cell.locked {
     background-color: #616161 ;
     color: #fff;
+    pointer-events: none;
 }
 
 .fa-calendar {

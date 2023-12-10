@@ -109,6 +109,9 @@ function refreshReservableSchedule(event) {
 
             case 'AVAILABLE':
                 document.getElementById(reservableScheduleUpdateEventDto.id).classList.remove('locked');
+                if(document.getElementById(reservableScheduleUpdateEventDto.id).classList.contains('select')) {
+                    document.getElementById(reservableScheduleUpdateEventDto.id).classList.remove('select');
+                }
                 break;
         }
     })
