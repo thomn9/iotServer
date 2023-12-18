@@ -18,7 +18,7 @@ public class ReservationToReservationDetailDtoConverter implements Converter<Res
                 .phoneNumber(source.getPhoneNumber())
                 .reservationCode(source.getReservationCode())
                 //todo impl real res code
-                .reservableScheduleId(1l)
+                .reservableScheduleId(1L)
                 .build();
     }
 

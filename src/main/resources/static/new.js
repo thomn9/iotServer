@@ -50,17 +50,13 @@ $(document).ready(function(){
 
 function lockReservableSchedule(id) {
     xhttp = new XMLHttpRequest();
-    const reservableScheduleId = id;
-    document.getElementById('reservableScheduleId').value = id;
     xhttp.open('POST',`/reservation/lock?reservableScheduleId=${id}`, true)
     xhttp.send()
-    /*stompClient.send("/app/reservation", {},
-        JSON.stringify(
-            {'wsAction':"LOCK",
-                'reservableScheduleId':reservableScheduleId,
-                'reservationCode': null,
-                'reservationBaseDto': null
-            }));*/
+    xhttp.onreadystatechange = function() {
+        if (xhttp.readyState === XMLHttpRequest.DONE) {
+            document.getElementById('reservableScheduleId').value = id;
+        }
+    }
 }
 
 function createReservation() {
@@ -104,6 +100,7 @@ function refreshReservableSchedule(event) {
         if (targetReservableSchedule != null) {
             switch (reservableScheduleUpdateEventDto.newReservableState) {
                 case 'LOCKED':
+                case 'UNAVAILABLE':
                     if (!document.getElementById(reservableScheduleUpdateEventDto.id).classList.contains('select')) {
                         document.getElementById(reservableScheduleUpdateEventDto.id).classList.add('locked');
                     }

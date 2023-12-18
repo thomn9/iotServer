@@ -34,10 +34,7 @@
                         <div class="mx-0 mb-0 row justify-content-sm-center justify-content-start px-1">
                             <span class="fa-light fa-hand-holding"></span>
                             <select class="form-select">
-                                <option selected>Zvolte službu</option>
-                                <option value="1">One</option>
-                                <option value="2">Two</option>
-                                <option value="3">Three</option>
+                                <option th:each="serviceDefinition : ${serviceDefinitions}" th:text="${serviceDefinition.getServiceName()}" th:value="${serviceDefinition.getId()}"></option>
                             </select>
                             <span></span>
                             <span class="fa fa-calendar"></span>
@@ -50,7 +47,8 @@
                         <div class="row text-center mx-0">
                             <div class="col-md-2 col-4 my-1 px-2"
                                  th:each="reservableScheduleRecord : ${reservableSchedule}">
-                                <div th:class="${'cell py-1 ' + reservableScheduleRecord.getReservableState().toString().toLowerCase()}"
+                                <div th:class="${reservableScheduleRecord.getReservableState().toString() == 'LOCKED' ||
+                                reservableScheduleRecord.getReservableState().toString() == 'UNAVAILABLE' ? 'cell py-1 locked'  : 'cell py-1'}"
                                      th:text="${reservableScheduleRecord.getReservableTimeWindow().getMinimum() + '-' + reservableScheduleRecord.getReservableTimeWindow().getMaximum()}"
                                      th:id="${reservableScheduleRecord.getId()}" onclick="lockReservableSchedule(id)">
                                 </div>
@@ -59,7 +57,6 @@
                     </div>
                     <div class="card-body p-3 p-sm-5">
                         <div class="container">
-                            <form onsubmit="createReservation()">
                                 <div class="row text-left mx-0">
                                     <div class="form-group">
                                         <input id="reservableScheduleId" class="form-control" hidden>
@@ -84,9 +81,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary">Vytvořit rezeravci</button>
+                                    <button class="btn btn-primary" onclick="createReservation()">Vytvořit rezeravci</button>
                                 </div>
-                            </form>
                         </div>
                     </div>
                 </form>

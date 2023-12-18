@@ -5,6 +5,7 @@ import cz.reservation.app.model.ReservableState;
 import cz.reservation.app.model.dto.BusinessHoursDto;
 import cz.reservation.app.model.dto.ReservableScheduleBaseDto;
 import cz.reservation.app.model.dto.ReservableScheduleDto;
+import cz.reservation.app.model.dto.ServiceDefinitionDto;
 import cz.reservation.app.model.entity.ReservableSchedule;
 import cz.reservation.app.repository.JpaReservableScheduleRepository;
 import cz.reservation.app.repository.JpaServiceDefinitionRepository;
@@ -104,6 +105,11 @@ public class ReservableScheduleServiceImpl implements ReservableScheduleService 
                 .stream()
                 .map(reservableSchedule -> conversionService.convert(reservableSchedule,ReservableScheduleDto.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ServiceDefinitionDto> getServiceDefinitions () {
+        return administrationService.getServiceDefinitions();
     }
 
 }

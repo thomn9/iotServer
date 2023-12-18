@@ -41,6 +41,7 @@ public class WebController {
             reservationDate = LocalDate.now().toString();
         }
         if (serviceId == null){
+            //todo dynamic value
             serviceId = 1L;
         }
 
@@ -48,6 +49,7 @@ public class WebController {
 
         ModelAndView model = new ModelAndView("home");
         model.addObject("reservableSchedule", this.reservableScheduleService.getReservableSchedule(LocalDate.parse(reservationDate),serviceId));
+        model.addObject("serviceDefinitions", this.reservableScheduleService.getServiceDefinitions());
         return model;
     }
 
